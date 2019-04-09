@@ -26,10 +26,4 @@ public class RegisterInfoInnerServiceimpl implements RegisterInfoInnerService {
         return registerInfoInnerMapper.insert(registerInfoInner);
     }
 
-    @Override
-    public List<RegisterInfoInner> GetHadChecked(String flag){
-        DataSourceContextHolder.clearDBType();
-        DataSourceContextHolder.setDBType("dataSouce1");
-        return registerInfoInnerMapper.selectByFlag(flag);
-    }
 }

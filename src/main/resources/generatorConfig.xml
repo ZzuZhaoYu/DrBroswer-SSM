@@ -15,7 +15,7 @@
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
 
         <jdbcConnection driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-                        connectionURL="jdbc:sqlserver://10.168.1.218:1433;dataBase=remote_pacs"
+                        connectionURL="jdbc:sqlserver://127.0.0.1;dataBase=remote_pacs"
                         userId="sa"
                         password="lab123">
         </jdbcConnection>
@@ -60,7 +60,7 @@
         </javaClientGenerator>
         <!-- 指定数据库表 -->
 
-        <table tableName="temporary_report" domainObjectName="TemporaryReport"
+        <table tableName="compare_junior" domainObjectName="CompareJunior"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

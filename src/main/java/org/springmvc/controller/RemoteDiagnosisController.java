@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springmvc.dao.*;
+import org.springmvc.dao_junior.DicomWorkListJuniorMapper;
+import org.springmvc.dao_junior.RegisterInfoJuniorMapper;
 import org.springmvc.dto.*;
 import org.springmvc.pojo.*;
 import org.springmvc.pojo_inner.RegisterInfoInner;
+import org.springmvc.pojo_junior.DicomWorkListJunior;
+import org.springmvc.pojo_junior.RegisterInfoJunior;
 import org.springmvc.service.*;
 import org.springmvc.tool.DataSourceContextHolder;
 import org.springmvc.tool.ImageAndReportPathGenerator;
@@ -87,8 +91,20 @@ public class RemoteDiagnosisController {
     @Resource
     private RemoteReportMapper remotereportMapper;
 
+    @Resource
+    private RegisterInfoJuniorMapper registerInfoJuniorMapper;
+
+    @Resource
+    private HospitalMapper hospitalMapper;
+
+    @Resource
+    private DicomWorkListJuniorMapper dicomWorkListJuniorMapper;
+
+    @Resource
+    private CompareJuniorMapper compareJuniorMapper;
+
     /**
-     * @Description: 远程诊断登记
+     * @Description: 远程诊断登记(免登记)
      * @Author: Shalldid
      * @Date: Created in 11:31 2018-05-10
      * @Return:
@@ -130,9 +146,157 @@ public class RemoteDiagnosisController {
         }
         RemoteRegisterCallBack r = new RemoteRegisterCallBack();
         r.setInfo(result);
-        r.setUrl("UpLoadFile://" + checkNum + "&" + u.getId() + "&"+ userService.getHosIdOfUser(u.getDept()));
+
+//        r.setUrl("UpLoadFile://" + checkNum + "&" + u.getId() + "&"+ userService.getHosIdOfUser(u.getDept()));
+        r.setUrl("UpLoadFile://" +"2" + "&"+userService.getHosIdOfUser(u.getDept()) + "&" + u.getUsername());
         return JSON.toJSONString(r);
     }
+
+    /**
+     * @Description: 远程诊断登记（批量）
+     * @Author: Shalldid
+     * @Date: Created in 11:31 2018-05-10
+     * @Return:
+     **/
+    @RequestMapping(value = "/remote_register_batch",method = RequestMethod.POST)
+    @ResponseBody
+    public String registerRemoteDiagnosisBatch(@RequestParam("CheckNum") String checknum,
+                                          HttpSession httpSession) throws Exception{
+        System.out.println(checknum);
+
+        String[] aa = checknum.split("\\,");
+
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat1=new SimpleDateFormat("yyyyMMdd");
+
+        RemoteRegisterCallBack r = new RemoteRegisterCallBack();
+        String s="";
+
+        User u = (User) httpSession.getAttribute("user");
+
+        for(String a:aa) {
+            String c = a.replaceAll("[`qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……& amp;*（）——+|{}【】‘；：”“’。，、？|-]", "");
+            System.out.println(c);
+
+            DicomWorkListJunior dicomWorkListJunior = dicomWorkListJuniorMapper.selectByAccessionN(c);
+            RegisterInfoJunior registerInfoJunior = registerInfoJuniorMapper.selectByRecordId(c);
+            RemoteRegister remoteRegister = new RemoteRegister();
+            remoteRegister.setFlag("未上传图像");
+            remoteRegister.setId(UUID.randomUUID().toString());//
+            System.out.println(registerInfoJunior);
+            remoteRegister.setIdcard(registerInfoJunior.getIdentityid());
+            System.out.println(dicomWorkListJunior);
+            remoteRegister.setModality(dicomWorkListJunior.getModality());
+            remoteRegister.setTagpatientid("");
+            remoteRegister.setRegdate(new Date());
+            System.out.println(dicomWorkListJunior.getStartdate().substring(0, 4) + "-" + dicomWorkListJunior.getStartdate().substring(4, 6) + "-" + dicomWorkListJunior.getStartdate().substring(6, 8));
+            remoteRegister.setStudydate(simpleDateFormat.parse(dicomWorkListJunior.getStartdate().substring(0, 4) + "-" + dicomWorkListJunior.getStartdate().substring(4, 6) + "-" + dicomWorkListJunior.getStartdate().substring(6, 8)));
+//            User u = (User) httpSession.getAttribute("user");
+            remoteRegister.setRemotehos(userService.getHosIdOfUser(u.getDept()));
+            remoteRegister.setChecknum(c);
+            String result = "";
+            try {
+                int remote_register_status = remoteRegisterService.insertNewRegister(remoteRegister);
+                int patient_insert_status = patientService.insertOrUpdatePat(registerInfoJunior.getPatname(), registerInfoJunior.getIdentityid(), registerInfoJunior.getPatgender(), sdf.format(registerInfoJunior.getPatbirthdate()), registerInfoJunior.getAddress(), "", registerInfoJunior.getTelephone());
+
+                CompareJunior compareJunior=new CompareJunior(UUID.randomUUID().toString(),registerInfoJunior.getRecordid(),departmentMapper.getHosIdbyDeptid(u.getDept()));
+                int compare_junior_satatus=compareJuniorMapper.insert(compareJunior);
+
+                if (remote_register_status == 1 && patient_insert_status == 1 &&compare_junior_satatus==1) {
+                    result = c;
+                }
+            } catch (Exception e) {
+                result = "0";
+                e.printStackTrace();
+            }
+
+            if(result=="0"){
+                r.setInfo("0");
+                break;
+            }
+
+//            RemoteRegisterCallBack r = new RemoteRegisterCallBack();
+            r.setInfo(result);
+
+            s+= "&" + c + "-" + simpleDateFormat1.format(remoteRegister.getStudydate());
+//            r.setUrl("UpLoadFile://" + userService.getHosIdOfUser(u.getDept()) + "/" + u.getUsername() + "/" + checknum + "&" + remoteRegister.getStudydate());
+        }
+        r.setUrl("UpLoadFile://" +"1"+ "&"+userService.getHosIdOfUser(u.getDept()) + "&" + u.getUsername() +s);
+
+        System.out.println(r.getUrl());
+        return JSON.toJSONString(r);
+    }
+    /**
+     * @Description: 远程诊断登记（单个）
+     * @Author: Shalldid
+     * @Date: Created in 11:31 2018-05-10
+     * @Return:
+     **/
+    @RequestMapping(value = "/remote_register_batch_single",method = RequestMethod.POST)
+    @ResponseBody
+    public String registerRemoteDiagnosisSingle(@RequestParam("CheckNum") String checknum,
+                                          HttpSession httpSession) throws Exception{
+        System.out.println(checknum);
+
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+//        SimpleDateFormat simpleDateFormat1=new SimpleDateFormat("yyyyMMdd");
+
+        RemoteRegisterCallBack r = new RemoteRegisterCallBack();
+//        String s="";
+
+        User u = (User) httpSession.getAttribute("user");
+
+
+            String c = checknum.replaceAll("[`qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……& amp;*（）——+|{}【】‘；：”“’。，、？|-]", "");
+            System.out.println(c);
+
+            DicomWorkListJunior dicomWorkListJunior = dicomWorkListJuniorMapper.selectByAccessionN(c);
+            RegisterInfoJunior registerInfoJunior = registerInfoJuniorMapper.selectByRecordId(c);
+            RemoteRegister remoteRegister = new RemoteRegister();
+            remoteRegister.setFlag("未上传图像");
+            remoteRegister.setId(UUID.randomUUID().toString());//
+            System.out.println(registerInfoJunior);
+            remoteRegister.setIdcard(registerInfoJunior.getIdentityid());
+            System.out.println(dicomWorkListJunior);
+            remoteRegister.setModality(dicomWorkListJunior.getModality());
+            remoteRegister.setTagpatientid("");
+            remoteRegister.setRegdate(new Date());
+            System.out.println(dicomWorkListJunior.getStartdate().substring(0, 4) + "-" + dicomWorkListJunior.getStartdate().substring(4, 6) + "-" + dicomWorkListJunior.getStartdate().substring(6, 8));
+            remoteRegister.setStudydate(simpleDateFormat.parse(dicomWorkListJunior.getStartdate().substring(0, 4) + "-" + dicomWorkListJunior.getStartdate().substring(4, 6) + "-" + dicomWorkListJunior.getStartdate().substring(6, 8)));
+//            User u = (User) httpSession.getAttribute("user");
+            remoteRegister.setRemotehos(userService.getHosIdOfUser(u.getDept()));
+            remoteRegister.setChecknum(c);
+            String result = "";
+            try {
+                int remote_register_status = remoteRegisterService.insertNewRegister(remoteRegister);
+                int patient_insert_status = patientService.insertOrUpdatePat(registerInfoJunior.getPatname(), registerInfoJunior.getIdentityid(), registerInfoJunior.getPatgender(), sdf.format(registerInfoJunior.getPatbirthdate()), registerInfoJunior.getAddress(), "", registerInfoJunior.getTelephone());
+
+                CompareJunior compareJunior=new CompareJunior(UUID.randomUUID().toString(),registerInfoJunior.getRecordid(),departmentMapper.getHosIdbyDeptid(u.getDept()));
+                int compare_junior_satatus=compareJuniorMapper.insert(compareJunior);
+
+                if (remote_register_status == 1 && patient_insert_status == 1 &&compare_junior_satatus==1) {
+                    result = c;
+                }
+            } catch (Exception e) {
+                result = "0";
+                e.printStackTrace();
+            }
+//            RemoteRegisterCallBack r = new RemoteRegisterCallBack();
+            r.setInfo(result);
+
+//            s+= "&" + c + "-" + simpleDateFormat1.format(remoteRegister.getStudydate());
+//            r.setUrl("UpLoadFile://" + userService.getHosIdOfUser(u.getDept()) + "/" + u.getUsername() + "/" + checknum + "&" + remoteRegister.getStudydate());
+
+        r.setUrl("UpLoadFile://" +"2"+ "&"+userService.getHosIdOfUser(u.getDept()) + "&" + u.getUsername());
+
+        System.out.println(r.getUrl());
+        return JSON.toJSONString(r);
+    }
+
+
+
     /**
      * @Description: 返回待写报告列表
      * @Author: Shalldid
@@ -834,27 +998,54 @@ public class RemoteDiagnosisController {
         return JSON.toJSONString(hosInfos);
     }
 
-    @RequestMapping(value="/getHadChecked",method = RequestMethod.POST)
+    @RequestMapping(value="/getHadChecked")
     @ResponseBody
-    public String getHadChecked(Pagination p){
+    public String getHadChecked(Pagination p,HttpSession httpSession){
+
+        User u=(User)httpSession.getAttribute("user");
 
         int currIndex = (p.getPageCurrent() - 1) * p.getPageSize();
         int pageSize  = p.getPageSize();
         boolean ifFirst = (p.getPageCurrent() == 1);
-        List<RegisterInfoInner>  registerInfoInners=  registerInfoInnerService.GetHadChecked("已检查");
+        List<RegisterInfoJunior> registerInfoJuniors=registerInfoJuniorMapper.selectByFlag("已检查");
 
-        int totalRow = registerInfoInners.size();
-        boolean ifLast = ((currIndex + pageSize) <= totalRow) ? true : false;   //当前数据index加上pageSize是否小于等于总数量，若是则为最后一页
-        int totalPage = (totalRow % pageSize) == 0 ? (totalRow / pageSize) : ((totalRow / pageSize) + 1);
-        PaginationResult<RegisterInfoInner> paginationResult = new PaginationResult();
-        paginationResult.setFirstPage(ifFirst);
-        paginationResult.setLastPage(ifLast);
-        paginationResult.setList(registerInfoInners);
-        paginationResult.setPageNumber(p.getPageCurrent());
-        paginationResult.setTotalRow(totalRow);
-        paginationResult.setTotalPage(totalPage);
-        paginationResult.setPageSize(pageSize);
-        return JSON.toJSONString(paginationResult);
+        CompareJunior compareJunior=new CompareJunior();
+        List<JuniorCheckedDto> juniorCheckedDtos=new ArrayList<JuniorCheckedDto>();
+        for(RegisterInfoJunior registerInfoJunior:registerInfoJuniors) {
+
+            if (compareJuniorMapper.selectByCheckNum(registerInfoJunior.getRecordid()) == null) {
+
+
+                JuniorCheckedDto juniorCheckedDto = new JuniorCheckedDto();
+                juniorCheckedDto.setCheckNum(registerInfoJunior.getRecordid());
+                juniorCheckedDto.setExamItemName(registerInfoJunior.getExamitemname());
+                juniorCheckedDto.setHosName(hospitalMapper.getHosNameByHosId(departmentMapper.getHosIdbyDeptid(u.getDept())));
+                //   remoteWaitForReportTab.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteRegister.getTagpatientid(), simpleDateFormat.format(remoteRegister.getStudydate()), remoteRegister.getRemotehos()));
+                juniorCheckedDto.setPatGender(registerInfoJunior.getPatgender());
+                juniorCheckedDto.setPatient_Age(registerInfoJunior.getAge() + registerInfoJunior.getAgetype());
+                juniorCheckedDto.setPatName(registerInfoJunior.getPatname());
+                String checkdate = dicomWorkListJuniorMapper.selectStartDateByPatientId(registerInfoJunior.getChecknum());
+                System.out.println(checkdate);
+                String checkDateChange = checkdate.substring(0, 4) + "-" + checkdate.substring(4, 6) + "-" + checkdate.substring(6, 8);
+                juniorCheckedDto.setCheckDate(checkDateChange);//
+                juniorCheckedDto.setImagePath(imageAndReportPathGenerator.getInnerImagePath(registerInfoJunior.getChecknum(), dicomWorkListJuniorMapper.selectStartDateByPatientId(registerInfoJunior.getChecknum()), ""));
+                juniorCheckedDtos.add(juniorCheckedDto);
+            }
+        }
+            int totalRow = juniorCheckedDtos.size();
+            boolean ifLast = ((currIndex + pageSize) <= totalRow) ? true : false;   //当前数据index加上pageSize是否小于等于总数量，若是则为最后一页
+            int totalPage = (totalRow % pageSize) == 0 ? (totalRow / pageSize) : ((totalRow / pageSize) + 1);
+            PaginationResult<JuniorCheckedDto> paginationResult = new PaginationResult();
+            paginationResult.setFirstPage(ifFirst);
+            paginationResult.setLastPage(ifLast);
+            paginationResult.setList(juniorCheckedDtos);
+            paginationResult.setPageNumber(p.getPageCurrent());
+            paginationResult.setTotalRow(totalRow);
+            paginationResult.setTotalPage(totalPage);
+            paginationResult.setPageSize(pageSize);
+            System.out.println(paginationResult);
+            return JSON.toJSONString(paginationResult);
+
     }
 
 }

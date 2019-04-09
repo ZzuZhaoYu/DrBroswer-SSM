@@ -69,13 +69,6 @@
   </select>
 
 
-  <select id="selectByFlag" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from register_info
-    where Flag = #{flag,jdbcType=VARCHAR}
-  </select>
-
   <select id="selectByClinicId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />

@@ -19,5 +19,4 @@ public interface RegisterInfoInnerMapper {
 
     int updateByPrimaryKey(RegisterInfoInner record);
 
-    List<RegisterInfoInner> selectByFlag(String flag);
 }

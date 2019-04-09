@@ -9,5 +9,4 @@ public interface RegisterInfoInnerService {
 
     int saveNewRegisterInfo(RegisterInfoInner registerInfoInner);
 
-    List<RegisterInfoInner> GetHadChecked(String flag);
 }
