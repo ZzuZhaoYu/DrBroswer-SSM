@@ -13,11 +13,19 @@
     <result column="modality" jdbcType="VARCHAR" property="modality" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="studydate" jdbcType="TIMESTAMP" property="studydate" />
+    <result column="uploaddoccode" jdbcType="VARCHAR" property="uploaddoccode" />
+    <result column="uploaddate" jdbcType="TIMESTAMP" property="uploaddate" />
   </resultMap>
   <sql id="Base_Column_List">
     id, checknum, tagpatientid, idcard, flag, remotehos, regdate, pattype, modality, remarks,
     studydate
   </sql>
+
+  <sql id="Base_Column_List_Add">
+    id, checknum, tagpatientid, idcard, flag, remotehos, regdate, pattype, modality, remarks,
+    studydate,uploaddoccode,uploaddate
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
@@ -25,6 +33,21 @@
     where id = #{id,jdbcType=VARCHAR}
   </select>
 
+
+  <select id="getRemoteByCheckNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from remote_register
+    where checknum = #{checknum,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="getAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from remote_register
+    where 1=1
+  </select>
 
   <select id="selectAllocateSearchById" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select

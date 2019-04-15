@@ -120,8 +120,7 @@ function checkReport_Operation3(value,data) {
         var html = null;
     }else {
         alert(data.checkNum);
-        var html = '<input type="checkbox" name="check"  value="\''+ data.checkNum+'\'" >';
-
+        var html = '<input type="checkbox" name="check"  value="\''+ data.checkNum+'\'"  checked="checked">';
     }
     return html;
 }
@@ -139,7 +138,7 @@ $("#batch").click(function() {
      var bb = new Array();
     var temp = "";
     var a =document.getElementsByName("check");
-    if(a.length>1) {
+    // if(a.length>1) {
         for (var i = 0; i < a.length; i++) {
             if (a[i].checked) {
                 alert(a[i].value);
@@ -162,7 +161,7 @@ $("#batch").click(function() {
             dataType: "html",
             async: false,
             success: function (data) {
-                alert(data)
+                alert(data);
                 var pro = null;
                 pro = eval("(" + data + ")");
                 var info = pro.info;
@@ -177,38 +176,38 @@ $("#batch").click(function() {
                 }
             }
         });
-    }else{
-        for (var i = 0; i < a.length; i++) {
-            if (a[i].checked) {
-                alert(a[i].value);
-                temp = a[i].value;
-                bb.push(temp);
-            }
-        }
-        alert(bb);
-        $.ajax({
-            type: "post",
-            url: "remote/remote_register_batch_single"
-                + "?CheckNum=" + bb,
-            dataType: "html",
-            async: false,
-            success: function (data) {
-                alert(data)
-                var pro = null;
-                pro = eval("(" + data + ")");
-                var info = pro.info;
-                var url_path = pro.url;
-                if (info == 0) {
-                    BJUI.alertmsg('error', '未操作成功！请重新尝试！');
-                } else {
-                    BJUI.alertmsg('ok', '提交成功！');
-                    alert("123");
-                    $("#batch").attr("href", url_path);
-                    alert(url_path);
-                }
-            }
-        });
-    }
+    // }else{
+    //     for (var i = 0; i < a.length; i++) {
+    //         if (a[i].checked) {
+    //             alert(a[i].value);
+    //             temp = a[i].value;
+    //             bb.push(temp);
+    //         }
+    //     }
+    //     alert(bb);
+    //     $.ajax({
+    //         type: "post",
+    //         url: "remote/remote_register_batch_single"
+    //             + "?CheckNum=" + bb,
+    //         dataType: "html",
+    //         async: false,
+    //         success: function (data) {
+    //             alert(data)
+    //             var pro = null;
+    //             pro = eval("(" + data + ")");
+    //             var info = pro.info;
+    //             var url_path = pro.url;
+    //             if (info == 0) {
+    //                 BJUI.alertmsg('error', '未操作成功！请重新尝试！');
+    //             } else {
+    //                 BJUI.alertmsg('ok', '提交成功！');
+    //                 alert("123");
+    //                 $("#batch").attr("href", url_path);
+    //                 alert(url_path);
+    //             }
+    //         }
+    //     });
+    // }
 });
 
 // $("#reset").click(function() {

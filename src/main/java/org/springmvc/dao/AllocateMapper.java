@@ -14,4 +14,6 @@ public interface AllocateMapper {
     int updateByPrimaryKeySelective(Allocate record);
 
     int updateByPrimaryKey(Allocate record);
+
+    Allocate selectBychecknum(String checknum);
 }

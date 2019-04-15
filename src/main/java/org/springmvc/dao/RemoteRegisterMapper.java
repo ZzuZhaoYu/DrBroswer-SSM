@@ -37,5 +37,10 @@ public interface RemoteRegisterMapper {
 
     List<RemoteRegister> selectRemoteAllocateByFlag(String flag);
 
+    List<RemoteRegister> getAll();
+
+    List<RemoteRegister> getRemoteByCheckNum(String checknum);
+
+
 //    List<RemoteAllocateDto> selectByName(String name);
 }

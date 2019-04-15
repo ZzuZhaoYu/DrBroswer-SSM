@@ -104,8 +104,8 @@ public class PatientServiceimpl implements PatientService {
     public int account(){return patientMapper.selectCount();}
 
 
-    @Override
-    public List<Patient> getPatByIdcard1(String idcard){return  patientMapper.selectByPrimaryKey1(idcard);}
+//    @Override
+//    public List<Patient> getPatByIdcard1(String idcard){return  patientMapper.selectByPrimaryKey1(idcard);}
 
     @Override
     public  List<Patient> getRemoteRegisterAllocate(String name, String sex, String age){return patientMapper.selectAllocateSearch(name,sex,age);}

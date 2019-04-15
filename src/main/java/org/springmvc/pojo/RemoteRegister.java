@@ -25,6 +25,26 @@ public class RemoteRegister {
 
     private Date studydate;
 
+    private String uploaddoccode;
+
+    private Date uploaddate;
+
+    public String getUploaddoccode() {
+        return uploaddoccode;
+    }
+
+    public void setUploaddoccode(String uploaddoccode) {
+        this.uploaddoccode = uploaddoccode;
+    }
+
+    public Date getUploaddate() {
+        return uploaddate;
+    }
+
+    public void setUploaddate(Date uploaddate) {
+        this.uploaddate = uploaddate;
+    }
+
     public String getId() {
         return id;
     }
@@ -127,6 +147,8 @@ public class RemoteRegister {
                 ", modality='" + modality + '\'' +
                 ", remarks='" + remarks + '\'' +
                 ", studydate=" + studydate +
+                ", uploaddoccode='" + uploaddoccode + '\'' +
+                ", uploaddate=" + uploaddate +
                 '}';
     }
 }

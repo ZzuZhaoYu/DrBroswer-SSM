@@ -34,6 +34,7 @@ public interface UserMapper {
 
     List<User> selectUserByDept(String dept);
 
+
 //    List<String> selectAllAuth();
 
 //    List<String> selectAuthNameByAuthCode1(List<String> authCode1);

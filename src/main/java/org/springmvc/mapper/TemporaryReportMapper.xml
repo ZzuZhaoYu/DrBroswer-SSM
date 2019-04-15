@@ -22,7 +22,7 @@
     select 
     <include refid="Base_Column_List" />
     from temporary_report
-    where id = #{id,jdbcType=NVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
   </select>
 
 
@@ -41,6 +41,22 @@
         where writeupdatetime=(select max(writeupdatetime) from temporary_report where
     checknum=#{checknum,jdbcType=VARCHAR} ) and checknum=#{checknum,jdbcType=VARCHAR}
   </select>
+
+
+  <select id="selectListBycheckNum" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from temporary_report
+    where checknum=#{checknum,jdbcType=VARCHAR} Order By writeupdatetime ASC
+  </select>
+
+
+  <select id="selectCountBycheckNum" resultType="java.lang.Integer">
+    select count (*)
+    from temporary_report
+    where checknum=#{checknum,jdbcType=NVARCHAR}
+  </select>
+
 
 
   <select id="selectTemporaryReportByRemoteReportId" resultType="org.springmvc.pojo.TemporaryReport" >

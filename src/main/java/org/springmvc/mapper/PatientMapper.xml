@@ -43,12 +43,12 @@
   </select>
 
 
-  <select id="selectByPrimaryKey1" resultType="org.springmvc.pojo.Patient" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from pat_list
-    where idcard = #{idcard,jdbcType=VARCHAR}
-  </select>
+  <!--<select id="selectByPrimaryKey1" resultType="org.springmvc.pojo.Patient" parameterType="java.lang.String" >-->
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from pat_list-->
+    <!--where idcard = #{idcard,jdbcType=VARCHAR}-->
+  <!--</select>-->
 
   <select id="selectAllocateSearch" resultType="org.springmvc.pojo.Patient" parameterType="hashmap">
     select * from pat_list

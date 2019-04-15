@@ -26,7 +26,7 @@ public interface PatientService {
      * @Return:
      **/
     Patient getPatByIdcard(String idcard);
-    List<Patient> getPatByIdcard1(String idcard);
+//    List<Patient> getPatByIdcard1(String idcard);
     List<Patient> getAll();
     int account();
 
