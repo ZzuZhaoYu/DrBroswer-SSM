@@ -15,7 +15,7 @@
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
 
         <jdbcConnection driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-                        connectionURL="jdbc:sqlserver://127.0.0.1;dataBase=remote_pacs"
+                        connectionURL="jdbc:sqlserver://10.168.1.110;dataBase=zhilikangDrPacs"
                         userId="sa"
                         password="lab123">
         </jdbcConnection>
@@ -26,7 +26,7 @@
         </javaTypeResolver>
 
         <!-- targetProject:生成PO类的位置 -->
-        <javaModelGenerator targetPackage="org.springmvc.pojo"
+        <javaModelGenerator targetPackage="org.springmvc.pojo_junior"
                             targetProject="./src/main/java">
         <!--<javaModelGenerator targetPackage="test"-->
                             <!--targetProject="src/other">-->
@@ -41,7 +41,7 @@
            targetProject="ecps-manager-mapper"，下同-->
 
 
-        <sqlMapGenerator targetPackage="org.springmvc.mapper"
+        <sqlMapGenerator targetPackage="org.springmvc.mapper_junior"
                          targetProject="./src/main/java">
         <!--<sqlMapGenerator targetPackage="test"-->
                          <!--targetProject="src/other">-->
@@ -53,14 +53,14 @@
                              <!--targetPackage="test"-->
                              <!--targetProject="src/other">-->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="org.springmvc.dao"
+                             targetPackage="org.springmvc.dao_junior"
                              targetProject="./src/main/java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
 
-        <table tableName="compare_junior" domainObjectName="CompareJunior"
+        <table tableName="report" domainObjectName="ReportJunior"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

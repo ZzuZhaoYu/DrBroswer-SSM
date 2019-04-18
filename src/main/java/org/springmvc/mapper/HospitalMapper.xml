@@ -105,6 +105,14 @@
     from hos_list
     where id = #{id}
   </select>
+
+  <select id="getHosIdByHosName" resultType="java.lang.String">
+    select id
+    from hos_list
+    where hosName = #{hosName}
+  </select>
+
+
   <select id="selectAllHosId" resultType="java.lang.String">
     select id
     from hos_list

@@ -5,6 +5,10 @@
     <form action="" id="j_patient_form" name="j_patient_form">
         <fieldset><legend style="font-family:verdana;font-size:130%;color:orange;">患者信息检索：</legend>
             <div class="bjui-row col-4">
+                <label class="row-label">检查号：</label>
+                <div class="row-input">
+                    <input id="checknum" type="text" name="card_num_r" class="cardno" >
+                </div>
                 <label class="row-label">检查类型：</label>
                 <div class="row-input">
                     <select name="modality" id="modality" class="modality" data-toggle="selectpicker" data-width="150"  onchange="connectModality(this.value)">
@@ -16,15 +20,17 @@
                         <option value = "US">US</option>
                     </select>
                 </div>
-                <label class="row-label">患者类型：</label>
-                <div class="row-input">
-                    <select name="pat_type" id="pat_type"  class="pat_type" data-toggle="selectpicker" data-width="150"  onchange="connectPat_type(this.value)">
-                        <option value = "">全部</option>
-                        <option value = "门诊">门诊</option>
-                        <option value = "住院">住院</option>
-                        <option value = "急诊">急诊</option>
-                        <option value = "其他">其他</option>
-                    </select>
+                <label class="row-label">上传时间：</label>
+                <div class="row-input ">
+                    <input type="text" value="" data-toggle="datepicker" placeholder="点击选择日期" name="birthday_r" data-pattern="yyyy-MM-dd HH:mm:ss">
+                </div>
+                <label class="row-label">检查时间：</label>
+                <div class="row-input ">
+                    <input type="text" value="" data-toggle="datepicker" placeholder="点击选择日期" name="birthday_r" data-pattern="yyyy-MM-dd HH:mm:ss">
+                </div>
+                <label class="row-label">选择医生：</label>
+                <div class="row-input ">
+                    <input type="text" value="" data-toggle="datepicker" placeholder="点击选择日期" name="birthday_r" data-pattern="yyyy-MM-dd HH:mm:ss">
                 </div>
             </div>
         </fieldset>

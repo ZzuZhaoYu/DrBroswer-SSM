@@ -3,7 +3,7 @@
         if(data.check_number == "没有数据！"){
             var html = null;
         }else{
-            var html = '<button type="button" class="btn-blue" onclick="dialog_report4(\''+ data.id +'\',\''+data.patName+'\',\''+data.patGender+'\',\''+data.patient_Age+'\',\''+data.checkNum+'\',\''+data.imagePath+'\');">修改报告</button>';
+            var html = '<button type="button" class="btn-blue" onclick="dialog_report4(\''+ data.id +'\',\''+data.patName+'\',\''+data.patGender+'\',\''+data.patient_Age+'\',\''+data.checkNum+'\',\''+data.imagePath+'\',\''+data.hosName+'\');">修改报告</button>';
         }
         return html;
     }
@@ -16,7 +16,7 @@
         }
         return html;
     }
-    function dialog_report4(id,patName,patGender,patAge,checknum,imagePath) {
+    function dialog_report4(id,patName,patGender,patAge,checknum,imagePath,hosName) {
         var timenow = new Date().getTime();
         BJUI.dialog({
             id:'modify_report' + timenow,
@@ -25,7 +25,7 @@
             url: 'zlk_html/remote_modify_report_m.jsp?id=' + id
                 + '&patName='+ patName + '&patGender=' + patGender
                 + '&patAge=' + patAge + '&checknum=' + checknum
-                + '&imagePath=' + imagePath,
+                + '&imagePath=' + imagePath+'&hosName='+hosName,
             title:'修改报告'
         });
     }

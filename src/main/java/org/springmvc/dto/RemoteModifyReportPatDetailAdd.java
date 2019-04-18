@@ -11,6 +11,15 @@ public class RemoteModifyReportPatDetailAdd {
     private String examDiagnosis;
     private String imagePath;
     private String suggestion;
+    private String hosNamewrite;
+
+    public String getHosNamewrite() {
+        return hosNamewrite;
+    }
+
+    public void setHosNamewrite(String hosNamewrite) {
+        this.hosNamewrite = hosNamewrite;
+    }
 
     public String getSuggestion() {
         return suggestion;
@@ -105,6 +114,7 @@ public class RemoteModifyReportPatDetailAdd {
                 ", examDiagnosis='" + examDiagnosis + '\'' +
                 ", imagePath='" + imagePath + '\'' +
                 ", suggestion='" + suggestion + '\'' +
+                ", hosNamewrite='" + hosNamewrite + '\'' +
                 '}';
     }
 }

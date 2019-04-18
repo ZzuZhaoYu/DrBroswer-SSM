@@ -84,6 +84,13 @@
     where RecordID = #{checknum,jdbcType=VARCHAR}
   </select>
 
+  <select id="selectByCheckNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from register_info
+    where CheckNum = #{checknum,jdbcType=VARCHAR}
+  </select>
+
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from register_info

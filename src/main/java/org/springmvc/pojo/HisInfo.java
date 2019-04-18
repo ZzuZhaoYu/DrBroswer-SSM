@@ -33,6 +33,7 @@ public class HisInfo {
 
     private String hosId;
 
+
     public String getHosId() {
         return hosId;
     }

@@ -1,7 +1,12 @@
 package org.springmvc.tool;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springmvc.dao.SourceMapper;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class ImageAndReportPathGenerator {
@@ -28,6 +33,9 @@ public class ImageAndReportPathGenerator {
     public String getRedcrossPath() {
         return redcrossPath;
     }
+
+    @Autowired
+    private SourceMapper sourceMapper;
 
     /**
      * @Description: 返回院内图像地址，目前不使用smb读取
@@ -94,5 +102,18 @@ public class ImageAndReportPathGenerator {
 
     public String getRemoteReportUseSMB() {
         return remoteReportUseSMB;
+    }
+
+    /**
+     * @Description: 返回下级医院所要存储报告的地址
+     **/
+    public String getJuniorHosReportImagePath(String hosId, String patId, String format){
+        StringBuilder url = new StringBuilder();
+        url.append(sourceMapper.getReportImageBasePath(hosId));
+        System.out.println("imagegenrtae"+hosId);
+        System.out.println(sourceMapper.getReportImageBasePath(hosId));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        url.append("\\" + sdf.format(new Date()) + "\\" + patId + "." + format);
+        return url.toString();
     }
 }

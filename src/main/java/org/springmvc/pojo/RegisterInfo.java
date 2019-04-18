@@ -199,6 +199,8 @@ public class RegisterInfo {
         this.idcard = idcard;
     }
 
+
+
     @Override
     public String toString() {
         return "RegisterInfo{" +

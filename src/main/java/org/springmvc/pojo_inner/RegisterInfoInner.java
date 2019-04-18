@@ -573,4 +573,61 @@ public class RegisterInfoInner {
                 ", updatetime=" + updatetime +
                 '}';
     }
+
+    public RegisterInfoInner() {
+    }
+
+    public RegisterInfoInner(String checknum, String recordid, Date registertime, String operatorcode, Boolean payflag, BigDecimal paycount, Integer pattypecode, String clinicid, String patientid, String patname, String patnamepy, String patgender, Date patbirthdate, String address, String yibaoid, String identityid, String telephone, String patroomcode, String bedno, String examitemcode, String flag, String deptcode, Boolean newpatient, Integer age, String patroomname, String deptname, String examitemname, String agetype, Date photodate, String makercode, String makername, String examnamecode, String examnamename, String devcode, String devname, Boolean ifusingflag, String isdicomflag, String cardno, String jcbw, String jclb, String sjmd, String jcsf, String lczd, String sqdbh, String isregist, String xuhao, String isprint, String studyid, String district, String nowoperator, Date updatetime) {
+        this.checknum = checknum;
+        this.recordid = recordid;
+        this.registertime = registertime;
+        this.operatorcode = operatorcode;
+        this.payflag = payflag;
+        this.paycount = paycount;
+        this.pattypecode = pattypecode;
+        this.clinicid = clinicid;
+        this.patientid = patientid;
+        this.patname = patname;
+        this.patnamepy = patnamepy;
+        this.patgender = patgender;
+        this.patbirthdate = patbirthdate;
+        this.address = address;
+        this.yibaoid = yibaoid;
+        this.identityid = identityid;
+        this.telephone = telephone;
+        this.patroomcode = patroomcode;
+        this.bedno = bedno;
+        this.examitemcode = examitemcode;
+        this.flag = flag;
+        this.deptcode = deptcode;
+        this.newpatient = newpatient;
+        this.age = age;
+        this.patroomname = patroomname;
+        this.deptname = deptname;
+        this.examitemname = examitemname;
+        this.agetype = agetype;
+        this.photodate = photodate;
+        this.makercode = makercode;
+        this.makername = makername;
+        this.examnamecode = examnamecode;
+        this.examnamename = examnamename;
+        this.devcode = devcode;
+        this.devname = devname;
+        this.ifusingflag = ifusingflag;
+        this.isdicomflag = isdicomflag;
+        this.cardno = cardno;
+        this.jcbw = jcbw;
+        this.jclb = jclb;
+        this.sjmd = sjmd;
+        this.jcsf = jcsf;
+        this.lczd = lczd;
+        this.sqdbh = sqdbh;
+        this.isregist = isregist;
+        this.xuhao = xuhao;
+        this.isprint = isprint;
+        this.studyid = studyid;
+        this.district = district;
+        this.nowoperator = nowoperator;
+        this.updatetime = updatetime;
+    }
 }

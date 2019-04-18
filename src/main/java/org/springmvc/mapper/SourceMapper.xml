@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.springmvc.dao.SourceMapper" >
+  <resultMap id="BaseResultMap" type="org.springmvc.pojo.Source" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="hos_id" property="hosId" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="report_image_path" property="reportImagePath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, hos_id, ip, account, pwd, report_image_path
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from source_list
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getAllSource" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from source_list
+    where 1=1
+  </select>
+
+  <select id="getReportImageBasePath" resultType="java.lang.String" >
+    select report_image_path
+    from source_list
+    where hos_id = #{id,jdbcType=VARCHAR};
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from source_list
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.springmvc.pojo.Source" >
+    insert into source_list (id, hos_id, ip, 
+      account, pwd, report_image_path
+      )
+    values (#{id,jdbcType=VARCHAR}, #{hosId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{account,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, #{reportImagePath,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.springmvc.pojo.Source" >
+    insert into source_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="hosId != null" >
+        hos_id,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="reportImagePath != null" >
+        report_image_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="hosId != null" >
+        #{hosId,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="reportImagePath != null" >
+        #{reportImagePath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.springmvc.pojo.Source" >
+    update source_list
+    <set >
+      <if test="hosId != null" >
+        hos_id = #{hosId,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="reportImagePath != null" >
+        report_image_path = #{reportImagePath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.springmvc.pojo.Source" >
+    update source_list
+    set hos_id = #{hosId,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      report_image_path = #{reportImagePath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

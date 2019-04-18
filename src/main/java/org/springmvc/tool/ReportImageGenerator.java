@@ -94,19 +94,44 @@ public class ReportImageGenerator {
         return bi;
     }
 
-    public String outputReport(String checkNum,String title,String examItemName,String name,String gender,String age,String deptName,String clinicId,
-                               String bedNo,String jcbw,String examDosc,String examDiagnosis,String reprotDoc,String checkDoc,String date) throws IOException {
+    public String[] outputReport(String checkNum,String title,String examItemName,String name,String gender,String age,String deptName,String clinicId,
+                               String bedNo,String jcbw,String examDosc,String examDiagnosis,String reprotDoc,String checkDoc,String date,String hosId) throws IOException {
         BufferedImage bi = setText(title,examItemName,name,gender,age,checkNum,deptName,clinicId,
                 bedNo,jcbw,examDosc,examDiagnosis,reprotDoc,checkDoc,date,imageAndReportPathGenerator.getRedcrossPath());
         String report_image_url = imageAndReportPathGenerator.getInnerReportPath(checkNum,"jpg");
+        System.out.println("generate"+hosId);
+        String report_image_url_Junior=imageAndReportPathGenerator.getJuniorHosReportImagePath(hosId,checkNum,"jpg");
+
+        System.out.println(report_image_url_Junior);
+        System.out.println("?????????????????????????");
+
+        String[] return_str=new String[2];
+        return_str[0]=report_image_url;
+        return_str[1]=report_image_url_Junior;
+
+
         OutputStream os;
+        OutputStream os_j;
         if("0".equals(imageAndReportPathGenerator.getInnerReportUseSMB())){
+//            System.out.println("if");
             File f = new File(report_image_url);
+            System.out.println(report_image_url);
             os = new BufferedOutputStream(new FileOutputStream(f));
         }else{
             SmbFile sf = new SmbFile(report_image_url);
             os = new BufferedOutputStream(new SmbFileOutputStream(sf));
         }
+
+        File f_junior=new File(report_image_url_Junior);    //下级医院报告文件
+
+        File fileParent = f_junior.getParentFile();
+        if (!fileParent.exists()) {
+            fileParent.mkdirs();
+        }
+        f_junior.createNewFile();
+
+        os_j=new BufferedOutputStream(new FileOutputStream(f_junior));     //下级医院报告输出
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bi, "JPG", baos);
         InputStream is = new ByteArrayInputStream(baos.toByteArray());
@@ -114,14 +139,18 @@ public class ReportImageGenerator {
             byte [] buffer =  new byte [ 1024 ];
             while  (is.read(buffer) != - 1 ) {
                 os.write(buffer);
+                os_j.write(buffer);    //输出到下级医院
                 buffer = new byte [ 1024 ];
             }
-            return report_image_url;
+            return return_str;
         } catch (IOException e) {
             e.printStackTrace();
-            return "error";
+            return_str[0]="error";
+            return_str[1]="error";
+            return return_str;
         }finally {
             os.close();
+            os_j.close();  //下级医院输出流关闭
             is.close();
         }
     }

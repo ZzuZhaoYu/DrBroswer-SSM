@@ -90,6 +90,9 @@
         <div class="reportHead">
             <div class="icon"><img src="images/redcross.png" /></div>
             <div class="hostitle"><span id="hosName"></span></div>
+
+            <input type="hidden" id="hosname1" value="${param.hosName}">
+
         </div>
         <hr width="750" align="center">
         <div class="patientInfo">

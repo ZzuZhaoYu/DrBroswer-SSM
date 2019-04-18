@@ -1,12 +1,13 @@
 <script type="text/javascript">
-    function checkReport_Operation3(value,data) {
+    function checkReport_Operation31(value,data) {
         alert(data);
-        if(data.check_number == "没有数据！"){
+        alert(data.hosName);
+        if(data.checkNum == "没有数据！"){
             var html = null;
         }else{
             // var html = '<button type="button" class="btn-blue" onclick="dialog_report3(\''+ data.checkNum + '\',\'' + data.patName + '\',\'' +data.patGender
             //     + '\',\'' + data.patient_Age + '\',\'' + data.imagePath + '\',\'' + data.hosName_m+'\');">填写报告</button>';
-            var html = '<button type="button" class="btn-blue" onclick="dialog_report3(\''+ data.id +'\',\''+data.patName+'\',\''+data.patGender+'\',\''+data.patient_Age+'\',\''+data.checkNum+'\',\''+data.imagePath+'\',\''+data.hosName+'\');">填写报告</button>';
+            var html = '<button type="button" class="btn-blue" onclick="dialog_report30(\''+ data.id +'\',\''+data.patName+'\',\''+data.patGender+'\',\''+data.patient_Age+'\',\''+data.checkNum+'\',\''+data.imagePath+'\',\''+data.hosName+'\');">填写报告</button>';
         }
         return html;
     }
@@ -18,7 +19,7 @@
         }
         return html;
     }
-    function dialog_report3(id, patName, patGender, patAge, checkNum,imagePath,hosName) {
+    function dialog_report30(id, patName, patGender, patAge, checkNum,imagePath,hosName) {
         var timenow = new Date().getTime();
         alert("123");
         BJUI.dialog({
@@ -56,7 +57,7 @@
             <th rowspan="2" align="center" data-options="{name:'checkNum',align:'center',width:170,menu:false}">检查号</th>
             <th colspan="3" align="center">患者信息</th>
             <th colspan="3" align="center">检查信息</th>
-            <th rowspan="2" align="center" data-options="{align:'center',width:100,menu:false,render:checkReport_Operation3}">查看详情</th>
+            <th rowspan="2" align="center" data-options="{align:'center',width:100,menu:false,render:checkReport_Operation31}">查看详情</th>
             <th rowspan="2" align="center" data-options="{align:'center',width:100,menu:false,render:viewReport_Operation}">图像</th>
         </tr>
         <tr>

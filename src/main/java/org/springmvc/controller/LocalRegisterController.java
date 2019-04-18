@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springmvc.dao.DepartmentMapper;
+import org.springmvc.dao.HospitalMapper;
 import org.springmvc.dao.RegisterInfoLocalMapper;
 import org.springmvc.dto.*;
 import org.springmvc.pojo.*;
@@ -73,6 +74,9 @@ public class LocalRegisterController {
 
     @Resource
     private ReportService reportService;
+
+    @Resource
+    private HospitalMapper hospitalMapper;
 
     /**
      * @Description: 医院本地登记(把信息插入到dicom_worklist和patlist)
@@ -265,9 +269,9 @@ public class LocalRegisterController {
 //        System.out.println(r);
         r.setFlag("已审核报告");
 //        System.out.println(r);
-        String report_path = reportImageGenerator.outputReport(report.getChecknum(), hosName, r.getExamitemname(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()));
-        report.setReportImagePath(report_path);
+        String[] report_path = reportImageGenerator.outputReport(report.getChecknum(), hosName, r.getExamitemname(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
+        report.setReportImagePath(report_path[0]);
         report.setReporttime(new Date());
         try{
 //            int report_checknum_count = reportService.getCountByCheckNum(report.getChecknum());
@@ -282,7 +286,7 @@ public class LocalRegisterController {
 //            if(reginfo_checknum_count>0){
 //                regInfoService.delete(report.getChecknum());
 //            }
-            int hisinfo_ = hisInfoService.updateHisInfoTime(r.getPatientid(),new Date(),report_path);
+            int hisinfo_ = hisInfoService.updateHisInfoTime(r.getPatientid(),new Date(),report_path[0]);
             System.out.println(r.getPatientid());
             System.out.println(report_path);
             int report_ = reportService.updateReportByReportAdd(report);
@@ -332,15 +336,15 @@ public class LocalRegisterController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         User u = (User)httpSession.getAttribute("user");
         RegisterInfoInner r = regInfoService.getRegInfoByCheckNumLocal(checknum);
-        String report_path = reportImageGenerator.outputReport(checknum, hosName, r.getExamitemname(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()));
+        String[] report_path = reportImageGenerator.outputReport(checknum, hosName, r.getExamitemname(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
 //        Report report = new Report(seriesNumGenerator.getReportCode(),r.getRecordid(),checknum,clinicId,r.getPatientid(),r.getIdcard(),bedNo,new Date(),"已写报告",
 //                examDesc,examDiagnosis,u.getId(),r.getExamitemcode(),r.getExamitemname(),0,"","",false,report_path,"",
 //                jcbw,sfyangxing);
         Report report = new Report(seriesNumGenerator.getReportCode(),r.getRecordid(),checknum,clinicId,r.getPatientid(),r.getIdentityid(),bedNo,new Date(),"已写报告",
-                examDesc,examDiagnosis,u.getId(),r.getExamitemcode(),r.getExamitemname(),0,deptName,"",false,report_path,"",
+                examDesc,examDiagnosis,u.getId(),r.getExamitemcode(),r.getExamitemname(),0,deptName,"",false,report_path[0],"",
                 jcbw,sfyangxing);
-        HisInfo hisInfo = new HisInfo(UUID.randomUUID().toString(),r.getPatientid(),new Date(),r.getExamitemname(),report_path,r.getChecknum(),"","",r.getSqdbh(),"",clinicId,
+        HisInfo hisInfo = new HisInfo(UUID.randomUUID().toString(),r.getPatientid(),new Date(),r.getExamitemname(),report_path[0],r.getChecknum(),"","",r.getSqdbh(),"",clinicId,
                 deptName,r.getIdentityid());
 
 //        String s=String.valueOf(configReader.get("section1","key2"));

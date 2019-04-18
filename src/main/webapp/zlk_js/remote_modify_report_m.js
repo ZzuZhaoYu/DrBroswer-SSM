@@ -1,15 +1,17 @@
 $(function(){
     //alert($("#bgCode").val());
+    var n=document.getElementById("hosname1").value;
     $.ajax({
         type:"post",
         url:"remote/"+ $("#bgCode").val() +"/modifyRemoteReportPatDetail",
+        data:{hosname1: n},
         dataType:"html",
         async:false,
         success:function(data){
             alert(data);
             var pro=null;
             pro = eval("("+data+")");
-            $("#hosName").text(pro.hosName);
+            $("#hosName").text(pro.hosNamewrite);
             $("#deptName").val(pro.deptName);
             $("#clinicId").val(pro.clinicId);
             $("#bedNo").val(pro.bedNo);

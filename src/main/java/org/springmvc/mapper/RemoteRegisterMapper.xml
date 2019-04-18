@@ -93,12 +93,8 @@
       <if test="age != ''">
         and pl.age=#{age,jdbcType=VARCHAR}
       </if>
-
     </where>
-
   </select>
-
-
 
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -109,11 +105,11 @@
     insert into remote_register (id, checknum, tagpatientid,
       idcard, flag, remotehos, 
       regdate, pattype, modality, 
-      remarks, studydate)
+      remarks, studydate,uploaddoccode,uploaddate)
     values (#{id,jdbcType=VARCHAR}, #{checknum,jdbcType=VARCHAR}, #{tagpatientid,jdbcType=VARCHAR},
       #{idcard,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{remotehos,jdbcType=VARCHAR}, 
       #{regdate,jdbcType=TIMESTAMP}, #{pattype,jdbcType=VARCHAR}, #{modality,jdbcType=VARCHAR}, 
-      #{remarks,jdbcType=VARCHAR}, #{studydate,jdbcType=TIMESTAMP})
+      #{remarks,jdbcType=VARCHAR}, #{studydate,jdbcType=TIMESTAMP},#{uploaddoccode,jdbcType=VARCHAR},#{uploaddate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.springmvc.pojo.RemoteRegister">
     insert into remote_register

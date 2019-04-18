@@ -51,6 +51,7 @@ public class Report {
 
     private Date verifydate;
 
+
     public Date getVerifydate() {
         return verifydate;
     }

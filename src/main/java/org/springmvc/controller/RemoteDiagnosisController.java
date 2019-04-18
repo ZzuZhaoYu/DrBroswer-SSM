@@ -2,6 +2,7 @@ package org.springmvc.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import org.apache.ibatis.annotations.Param;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springmvc.dao.*;
 import org.springmvc.dao_junior.DicomWorkListJuniorMapper;
 import org.springmvc.dao_junior.RegisterInfoJuniorMapper;
+import org.springmvc.dao_junior.ReportJuniorMapper;
 import org.springmvc.dto.*;
 import org.springmvc.pojo.*;
 import org.springmvc.pojo_inner.RegisterInfoInner;
@@ -106,6 +108,13 @@ public class RemoteDiagnosisController {
     @Resource
     private PatientMapper patientMapper;
 
+    @Resource
+    private FetchInfoFromMultiSourceService fetchInfoFromMultiSourceService;
+
+    @Resource
+    private ReportJuniorMapper reportJuniorMapper;
+
+
     /**
      * @Description: 远程诊断登记(免登记)
      * @Author: Shalldid
@@ -179,7 +188,7 @@ public class RemoteDiagnosisController {
         User u = (User) httpSession.getAttribute("user");
 
         for(String a:aa) {
-            String c = a.replaceAll("[`qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……& amp;*（）——+|{}【】‘；：”“’。，、？|-]", "");
+            String c = a.replaceAll("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……& amp;*（）——+|{}【】‘；：”“’。，、？|-]", "");
             System.out.println(c);
 
             DicomWorkListJunior dicomWorkListJunior = dicomWorkListJuniorMapper.selectByAccessionN(c);
@@ -189,7 +198,9 @@ public class RemoteDiagnosisController {
             remoteRegister.setId(UUID.randomUUID().toString());//
             System.out.println(registerInfoJunior);
             System.out.println("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-            if(registerInfoJunior.getIdentityid()==null || "".equals(registerInfoJunior.getIdentityid())){
+                   if(registerInfoJunior.getIdentityid()==null || "".equals(registerInfoJunior.getIdentityid())){
+                System.out.println("123");
+                System.out.println(dicomWorkListJunior.getPatientid());
                 remoteRegister.setIdcard(dicomWorkListJunior.getPatientid()+dicomWorkListJunior.getPatientid()+"00");
                 System.out.println("ca");
                 System.out.println(dicomWorkListJunior.getPatientid()+dicomWorkListJunior.getPatientid()+"00");
@@ -213,6 +224,7 @@ public class RemoteDiagnosisController {
                 String id="";
                 id=registerInfoJunior.getIdentityid();
                 if(id==null || "".equals(id)){
+                    System.out.println(registerInfoJunior);
                     int patient_insert_status1 = patientService.insertOrUpdatePat(registerInfoJunior.getPatname(), dicomWorkListJunior.getPatientid()+dicomWorkListJunior.getPatientid()+"00" , registerInfoJunior.getPatgender(), sdf.format(registerInfoJunior.getPatbirthdate()), registerInfoJunior.getAddress(), "", registerInfoJunior.getTelephone());
                     patient_insert_status=patient_insert_status1;
                 }
@@ -221,6 +233,7 @@ public class RemoteDiagnosisController {
                     patient_insert_status=patient_insert_status1;
                 }
 
+                System.out.println(remoteRegister);
                 int remote_register_status = remoteRegisterService.insertNewRegister(remoteRegister);
 //                int patient_insert_status = patientService.insertOrUpdatePat(registerInfoJunior.getPatname(), registerInfoJunior.getIdentityid(), registerInfoJunior.getPatgender(), sdf.format(registerInfoJunior.getPatbirthdate()), registerInfoJunior.getAddress(), "", registerInfoJunior.getTelephone());
 
@@ -355,12 +368,12 @@ public class RemoteDiagnosisController {
         paginationResult.setTotalPage(totalPage);
         paginationResult.setPageSize(pageSize);
 //        System.out.println("123");
-//        System.out.println(JSON.toJSONString(paginationResult));
-//        System.out.println("321");
+        System.out.println(JSON.toJSONString(paginationResult));
+        System.out.println("321");
         return JSON.toJSONString(paginationResult);
     }
     /**
-     * @Description: 远程诊断填写报告
+     * @Description: 远程诊断填写报告(报告回退以后，再次提交的时候，删除report该记录)
      * @Author: Shalldid
      * @Date: Created in 16:18 2018-05-10
      * @Return:
@@ -384,31 +397,16 @@ public class RemoteDiagnosisController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         User u = (User)httpSession.getAttribute("user");
         RemoteRegister r = remoteRegisterService.getRemoteRegisterByCheckNum(checknum);
-        String report_path = reportImageGenerator.outputReport(checknum, hosName, r.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()));
+        System.out.println(departmentMapper.getHosIdbyDeptid(u.getDept()));
+        System.out.println(hospitalMapper.getHosIdByHosName(hosName));
+        String[] report_path = reportImageGenerator.outputReport(checknum, hosName, r.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
         RemoteReport report = new RemoteReport(UUID.randomUUID().toString(),checknum,clinicId,pat_Name,pat_gender,pat_age,deptName,bedNo,jcbw,new Date(),sfyangxing,
-                r.getModality(),report_path,u.getId(),examDesc,examDiagnosis,r.getRemotehos(),null,"",suggestion);
+                r.getModality(),report_path[0],u.getId(),examDesc,examDiagnosis,r.getRemotehos(),null,"",suggestion);
         System.out.println(suggestion);
 
 
-        TemporaryReport temporaryReport=new TemporaryReport(UUID.randomUUID().toString(),report.getId(),checknum,report_path,u.getUsername(),u.getName(),new Date());
-//        HisInfo hisInfo = new HisInfo();
-//        hisInfo.setHosId(r.getRemotehos());
-//        hisInfo.setPatname(pat_Name);
-//        hisInfo.setCardno("");
-//        hisInfo.setChecknum(report.getChecknum());
-//        hisInfo.setClinicid(clinicId);
-//        hisInfo.setCsh("");
-//        hisInfo.setId(UUID.randomUUID().toString());
-//        hisInfo.setIdcard(r.getIdcard());
-//        hisInfo.setModality(r.getModality());
-//        hisInfo.setPatname(report.getPatname());
-//        hisInfo.setPatientid(r.getTagpatientid());
-//        hisInfo.setPattype(r.getPattype());
-//        hisInfo.setReportdate(new Date());
-//        hisInfo.setReportpath(report_path);
-//        hisInfo.setSqdbh("");
-//        hisInfo.setSqks(report.getDeptname());
+        TemporaryReport temporaryReport=new TemporaryReport(UUID.randomUUID().toString(),report.getId(),checknum,report_path[0],u.getUsername(),u.getName(),new Date());
         //TODO
         try{
             if(remoteReportService.getReportByChecknum(report.getChecknum())!=null){
@@ -418,7 +416,39 @@ public class RemoteDiagnosisController {
             int report_ = remotereportMapper.insertAdd(report);
             int reg_ = remoteRegisterService.updateFlagByCheckNum("已写报告", checknum);
             int temporary_report=remoteReportService.insertNewReportToTemporaryReport(temporaryReport);
-            if(report_ == 1 && reg_ == 1 && temporary_report==1){
+
+            RegisterInfoJunior registerInfoJunior=registerInfoJuniorMapper.selectByCheckNum(checknum);
+
+            Patient p=patientService.getPatByIdcard(remoteRegisterMapper.selcetByChecknum(checknum).getIdcard());
+
+            System.out.println(report_path[1]);
+
+            ReportJuniorDto reportJuniorDtoNew=new ReportJuniorDto();
+
+            if(registerInfoJunior==null){                      //单个上传
+                ReportJuniorDto reportJuniorDto =new ReportJuniorDto(seriesNumGenerator.getReportCode(),"",departmentMapper.getHosIdbyDeptid(u.getDept())+checknum,clinicId,r.getTagpatientid(),
+                        pat_Name,pat_gender,p.getPatbrithdate(),p.getAge(),
+                        p.getAgetype(),"","",bedNo,r.getRegdate(),
+                       p.getAddress(),p.getYibaoid(),p.getIdcard(),p.getTelephone(),new Date(),"已写报告",
+                        examDesc,examDiagnosis,u.getUsername(),u.getName(),"","",0,deptName,"",false,report_path[1], jcbw,sfyangxing);
+                reportJuniorDtoNew=reportJuniorDto;
+            }else {                     //批量上传
+
+                ReportJuniorDto reportJuniorDto = new ReportJuniorDto(seriesNumGenerator.getReportCode(), registerInfoJunior.getRecordid(), checknum, clinicId, registerInfoJunior.getPatientid(),
+                        registerInfoJunior.getPatname(), registerInfoJunior.getPatgender(), registerInfoJunior.getPatbirthdate(), registerInfoJunior.getAge(),
+                        registerInfoJunior.getAgetype(), registerInfoJunior.getPatroomcode(), registerInfoJunior.getPatroomname(), registerInfoJunior.getBedno(), registerInfoJunior.getRegistertime(),
+                        registerInfoJunior.getAddress(), registerInfoJunior.getYibaoid(), registerInfoJunior.getIdentityid(), registerInfoJunior.getTelephone(), new Date(), "已写报告",
+                        examDesc, examDiagnosis, u.getUsername(), u.getName(), registerInfoJunior.getExamitemcode(), registerInfoJunior.getExamitemname(), 0, deptName, "", false, report_path[1], jcbw, sfyangxing);
+                reportJuniorDtoNew=reportJuniorDto;
+            }
+            if(reportJuniorMapper.selectByChecknum(checknum)!=null){
+                reportJuniorMapper.deleteReportByCheckNum(checknum);
+//                remoteReportService.deleteReportById(remoteReportService.getReportByChecknum(report.getChecknum()).getId());
+            }
+            int junior_report=reportJuniorMapper.insertInto(reportJuniorDtoNew);
+
+
+            if(report_ == 1 && reg_ == 1 && temporary_report==1 && junior_report==1){
                 return "1";
             }else {
                 return "0";
@@ -474,7 +504,7 @@ public class RemoteDiagnosisController {
         paginationResult.setTotalRow(totalRow);
         paginationResult.setTotalPage(totalPage);
         paginationResult.setPageSize(pageSize);
-        //System.out.println(JSON.toJSONString(paginationResult));
+        System.out.println(JSON.toJSONString(paginationResult));
         return JSON.toJSONString(paginationResult);
     }
 
@@ -640,7 +670,7 @@ public class RemoteDiagnosisController {
      **/
     @RequestMapping(value = "/{id}/modifyRemoteReportPatDetail" , method = RequestMethod.POST, produces="text/html; charset=UTF-8")
     @ResponseBody
-    public String modifyRemoteReportPatDetail(@PathVariable("id") String id, HttpSession httpSession){
+    public String modifyRemoteReportPatDetail(@PathVariable("id") String id,@RequestParam("hosname1") String hosname, HttpSession httpSession){
         try {
             System.out.println(id);
 //            RemoteReport remoteReport = remoteReportService.getReportById(id);
@@ -660,8 +690,9 @@ public class RemoteDiagnosisController {
             temporaryReport.setVerifyupdatetime(new Date());
             temporaryReportMapper.updateIfHadVerified(temporaryReport.getVerifydoccode(),temporaryReport.getVerifydocname(),temporaryReport.getVerifyupdatetime(),id);
 
-
-            rmrpd.setHosName(hospitalService.getHosNameByHosId(userService.getHosIdOfUser(u.getDept())));
+////////////////////////////////////////////////////////////////
+            rmrpd.setHosNamewrite(hospitalService.getHosNameByHosId(userService.getHosIdOfUser(u.getDept())));
+            rmrpd.setHosName(hosname);
             rmrpd.setBedNo(remoteReport.getBedno());
             rmrpd.setClinicId(remoteReport.getClinicid());
             rmrpd.setDeptName(remoteReport.getDeptname());
@@ -682,7 +713,6 @@ public class RemoteDiagnosisController {
     }
 
 
-
     /**
      * @Description: 根据id加载报告病人细节(包含退回以后)
      * @Author: Shalldid
@@ -691,7 +721,8 @@ public class RemoteDiagnosisController {
      **/
     @RequestMapping(value = "/{id}/backedModifyRemoteReportPatDetail" , method = RequestMethod.POST, produces="text/html; charset=UTF-8")
     @ResponseBody
-    public String backedModifyRemoteReportPatDetail(@PathVariable("id") String id, HttpSession httpSession){
+    public String backedModifyRemoteReportPatDetail(@PathVariable("id") String id,@RequestParam("hosname1") String hosname, HttpSession httpSession){
+        System.out.println("lalala");
         try {
             System.out.println(id);
 //            RemoteReport remoteReport = remoteReportService.getReportById(id);
@@ -702,7 +733,8 @@ public class RemoteDiagnosisController {
             RemoteRegister remoteRegister = remoteRegisterService.getRemoteRegisterByCheckNum(temporaryReport.getChecknum());
             RemoteModifyReportPatDetailAdd rmrpd = new RemoteModifyReportPatDetailAdd();
             User u = (User) httpSession.getAttribute("user");
-            rmrpd.setHosName(hospitalService.getHosNameByHosId(userService.getHosIdOfUser(u.getDept())));
+            rmrpd.setHosNamewrite(hospitalService.getHosNameByHosId(userService.getHosIdOfUser(u.getDept())));
+            rmrpd.setHosName(hosname);
             rmrpd.setBedNo(remoteReport.getBedno());
             rmrpd.setClinicId(remoteReport.getClinicid());
             rmrpd.setDeptName(remoteReport.getDeptname());
@@ -759,9 +791,9 @@ public class RemoteDiagnosisController {
             remoteReport.setReporttime(new Date());
             remoteReport.setSfyangxing(sfyangxing);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            String report_path = reportImageGenerator.outputReport(checknum, hosName, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                    examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()));
-            remoteReport.setReportpath(report_path);
+            String[] report_path = reportImageGenerator.outputReport(checknum, hosName, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                    examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
+            remoteReport.setReportpath(report_path[0]);
 
             remoteReport.setVerifieddoccode(u.getUsername());
             int update_status = remoteReportService.updateReportAdd(remoteReport);
@@ -904,7 +936,11 @@ public class RemoteDiagnosisController {
             int rep_ = remoteReportService.updateReportById(id);
             System.out.println(rep_);
             int reg_ =remoteRegisterService.updateFlagByCheckNum("已分配",checknum);
+
+//            int report_junior_=reportJuniorMapper.updateFlagByCheckNum("已分配",checknum);
+
             System.out.println(reg_);
+//            if(reg_ == 1 &&rep_==1 && report_junior_==1){
             if(reg_ == 1 &&rep_==1){
                 return "1";
             }else {
@@ -1191,8 +1227,6 @@ public class RemoteDiagnosisController {
         for(RegisterInfoJunior registerInfoJunior:registerInfoJuniors) {
 
             if (compareJuniorMapper.selectByCheckNum(registerInfoJunior.getRecordid()) == null) {
-
-
                 JuniorCheckedDto juniorCheckedDto = new JuniorCheckedDto();
                 juniorCheckedDto.setCheckNum(registerInfoJunior.getRecordid());
                 juniorCheckedDto.setExamItemName(registerInfoJunior.getExamitemname());
@@ -1201,6 +1235,8 @@ public class RemoteDiagnosisController {
                 juniorCheckedDto.setPatGender(registerInfoJunior.getPatgender());
                 juniorCheckedDto.setPatient_Age(registerInfoJunior.getAge() + registerInfoJunior.getAgetype());
                 juniorCheckedDto.setPatName(registerInfoJunior.getPatname());
+                System.out.println(registerInfoJunior);
+                System.out.println(registerInfoJunior.getChecknum());
                 String checkdate = dicomWorkListJuniorMapper.selectStartDateByPatientId(registerInfoJunior.getChecknum());
                 System.out.println(checkdate);
                 String checkDateChange = checkdate.substring(0, 4) + "-" + checkdate.substring(4, 6) + "-" + checkdate.substring(6, 8);

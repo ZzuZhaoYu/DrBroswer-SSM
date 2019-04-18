@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="zlk_js/remote_write_report.js"></script>
+    <script type="text/javascript" src="zlk_js/remote_write_report.js"></script>
     <link rel="stylesheet" href="jsTree/theme/style.min.css"/>
     <link rel="stylesheet" href="zlk_css/remote_write_report.css" />
 </head>
@@ -17,7 +17,9 @@
         <input id="bgCode" type="hidden" value="${param.id}" />
         <div class="reportHead">
             <div class="icon"><img src="images/redcross.png" /></div>
-            <div class="hostitle"><span id="hosName">${param.hosName}</span></div>
+            <div class="hostitle"><span id="hosName"></span></div>
+
+            <input type="hidden" id="hosname1" value="${param.hosName}">
         </div>
         <hr width="750" align="center">
         <div class="patientInfo">

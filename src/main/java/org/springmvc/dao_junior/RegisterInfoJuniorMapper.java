@@ -20,4 +20,7 @@ public interface RegisterInfoJuniorMapper {
     List<RegisterInfoJunior> selectByFlag(String flag);
 
     RegisterInfoJunior selectByRecordId(String checknum);
+
+    RegisterInfoJunior selectByCheckNum(String checknum);
+
 }

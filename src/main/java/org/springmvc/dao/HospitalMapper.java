@@ -26,4 +26,6 @@ public interface HospitalMapper {
     List<Hospital> selectAll();
 
     int selectCount();
+
+    String getHosIdByHosName(String hosName);
 }

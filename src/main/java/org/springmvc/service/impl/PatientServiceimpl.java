@@ -45,9 +45,11 @@ public class PatientServiceimpl implements PatientService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date pat_birthday = sdf.parse(birthday);
         String[] ageAndType = birthGenerator.getAgeAndType(pat_birthday, new Date());
+        System.out.println("lalala");
         Patient patient = new Patient(pat_id_card, pat_name, pat_gender, pat_address, pat_soicalId, pat_phone, Integer.valueOf(ageAndType[0]), ageAndType[1]);   //初始化Patient
         System.out.println(patient);
         System.out.println("123321123321");
+        System.out.println("lalalalalallalalalaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         try {
             patient.setPatbrithdate(pat_birthday);
             System.out.println(patient);
@@ -77,9 +79,11 @@ public class PatientServiceimpl implements PatientService {
             patient.setUpdatetime(date);
             //System.out.println("patient_db == null");
             try{
+                System.out.println(patient);
                 status = patientMapper.insert(patient);
             }catch (Exception e){
                 logger.error("插入病人信息出现错误: " + e.getMessage());
+                System.out.println(patient_db.getIdcard());
                 logger.error("错误病人信息>>> " + "病人身份证号：" + patient_db.getIdcard());
                 e.printStackTrace();
                 status = -2;

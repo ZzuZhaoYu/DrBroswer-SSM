@@ -1,18 +1,20 @@
 $(function(){
     // alert("5");
     // alert($("#bgCode").val());
-    alert("222")
+    alert("222");
+    var n=document.getElementById("hosname1").value;
     // alert(data);
     $.ajax({
         type:"post",
         url:"remote/"+ $("#bgCode").val() +"/backedModifyRemoteReportPatDetail",
+        data:{hosname1: n},
         dataType:"html",
         async:false,
         success:function(data){
             alert(data);
             var pro=null;
             pro = eval("("+data+")");
-            $("#hosName").text(pro.hosName);
+            $("#hosName").text(pro.hosNamewrite);
             $("#deptName").val(pro.deptName);
             $("#clinicId").val(pro.clinicId);
             $("#bedNo").val(pro.bedNo);
@@ -29,6 +31,7 @@ $(function(){
 
 
 $("#submitReport").click(function(){
+    alert($("#hosName").text());
     BJUI.ajax('doajax',{
         url:"remote/submitReport?examDesc=" + $("#examDesc").val()
         + "&examDiagnosis=" + $("#examDiagnosis").val()
