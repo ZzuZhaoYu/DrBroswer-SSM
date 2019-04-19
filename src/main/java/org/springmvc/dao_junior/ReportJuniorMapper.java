@@ -28,4 +28,6 @@ public interface ReportJuniorMapper {
     int updateFlagByCheckNum(@Param("flag") String flag,@Param("checknum") String checknum);
 
     int deleteReportByCheckNum(String checknum);
+
+    String getReportCode(@Param("param") String param);
 }

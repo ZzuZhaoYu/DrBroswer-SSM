@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RemoteRegisterServiceimpl implements RemoteRegisterService {
@@ -184,7 +185,7 @@ public class RemoteRegisterServiceimpl implements RemoteRegisterService {
 //                    remoteWrittedReportTab.setPatient_Age(remoteReport.getPatage());
 //                    remoteWrittedReportTab.setPatName(remoteReport.getPatname());
 //                    remoteWrittedReportTab.setRegisterDate(sdf.format(remoteRegister.getRegdate()));
-                    remoteWrittedReportTab.setId("");
+                    remoteWrittedReportTab.setId(UUID.randomUUID().toString());
                     remoteWrittedReportTab.setPatGender(p.getPatgender());
                     remoteWrittedReportTab.setPatient_Age(p.getAge() + p.getAgetype());
                     remoteWrittedReportTab.setPatName(p.getPatname());

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springmvc.dao.*;
+import org.springmvc.dao_junior.ReportJuniorMapper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +36,10 @@ public class SeriesNumGenerator {
 
     @Autowired
     private RegisterInfoLocalMapper registerInfoLocalMapper;
+
+    @Autowired
+    private ReportJuniorMapper reportJuniorMapper;
+
     /**
      *@Description: 从数据库查询当前worklist表内最大的AccessionN号，若有则在当天的最大号加1，若无则返回检查类型+日期+001
      *@Author: Shalldid
@@ -204,8 +209,10 @@ public class SeriesNumGenerator {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String suffix = "BG" + dateFormat.format(systemDate) + "_____";
         String reportCode_temp = reportMapper.getReportCode(suffix);
-        //System.out.println(reportCode_temp);
+//        System.out.println("llllllllllllllllllllllllllllllll");
+//        System.out.println(reportCode_temp);
         if(reportCode_temp != null) {
+            System.out.println("12312313132");
             String tempCode_1 = reportCode_temp.substring(0,10);
             String tempCode_2 = reportCode_temp.substring(10,15);
             Integer tempInteger = Integer.parseInt(tempCode_2) + 1;
@@ -214,6 +221,31 @@ public class SeriesNumGenerator {
             return "BG" + dateFormat.format(systemDate) + "00001";
         }
     }
+
+    /**
+     *@Description: 从下级医院数据库查询当前report表内最大的ReportCode号，若有则在当天的最大号加1，若无则返回BG+日期+00001
+     *@Author: Shalldid
+     *@Date:Created in 14:58 2018-04-25
+     **/
+    public String getJuniorReportCode(){
+        Date systemDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String suffix = "BG" + dateFormat.format(systemDate) + "_____";
+        String reportCode_temp = reportJuniorMapper.getReportCode(suffix);
+        System.out.println("llllllllllllllllllllllllllllllll");
+        System.out.println(reportCode_temp);
+        if(reportCode_temp != null) {
+            System.out.println("12312313132");
+            String tempCode_1 = reportCode_temp.substring(0,10);
+            String tempCode_2 = reportCode_temp.substring(10,15);
+            Integer tempInteger = Integer.parseInt(tempCode_2) + 1;
+            return tempCode_1 + String.format("%05d", tempInteger);
+        }else {
+            return "BG" + dateFormat.format(systemDate) + "00001";
+        }
+    }
+
+
     /**
      * @Description: remoteReigster生成方法，格式为R+modality+yyyyMMdd+序列号3位，如RCT20180510001
      * @Author: Shalldid

@@ -63,7 +63,7 @@
     select
     <include refid="Base_Column_List" />
     from temporary_report
-    where remote_report_id = #{remote_report_id,jdbcType=NVARCHAR}
+    where remote_report_id = #{remote_report_id,jdbcType=NVARCHAR} and writeupdatetime = (SELECT MAX(writeupdatetime) FROM temporary_report);
   </select>
 
 
@@ -71,7 +71,7 @@
   <select id="selectIdByRemoteReportId" resultType="java.lang.String" >
     select id
     from temporary_report
-    where remote_report_id = #{remote_report_id,jdbcType=NVARCHAR}
+    where remote_report_id = #{remote_report_id,jdbcType=NVARCHAR} and writeupdatetime = (SELECT MAX(writeupdatetime) FROM temporary_report);
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >

@@ -3,11 +3,12 @@ $(function(){
     // alert($("#bgCode").val());
     alert("222");
     var n=document.getElementById("hosname1").value;
+    var m=document.getElementById("pat_checknum").value;
     // alert(data);
     $.ajax({
         type:"post",
         url:"remote/"+ $("#bgCode").val() +"/backedModifyRemoteReportPatDetail",
-        data:{hosname1: n},
+        data:{hosname1: n,checknum:m},
         dataType:"html",
         async:false,
         success:function(data){
@@ -31,7 +32,7 @@ $(function(){
 
 
 $("#submitReport").click(function(){
-    alert($("#hosName").text());
+    alert($("#hosname1").val());
     BJUI.ajax('doajax',{
         url:"remote/submitReport?examDesc=" + $("#examDesc").val()
         + "&examDiagnosis=" + $("#examDiagnosis").val()
@@ -41,11 +42,12 @@ $("#submitReport").click(function(){
         + "&bedNo=" + $("#bedNo").val()
         + "&jcbw=" + $("#jcbw").val()
         + "&sfyangxing=" + $("#sfyangxing").val()
-        + "&hosName=" + $("#hosName").text()
+        + "&hosName=" + $("#hosname1").val()
         + "&pat_name=" + $("#pat_name").val()
         + "&pat_gender=" + $("#pat_gender").val()
         + "&pat_age=" + $("#pat_age").val()
-        +"&suggestion=" +$("#suggestion_text_p").val(),
+        +"&suggestion=" +$("#suggestion_text_p").val()
+        +"&id=" +$("#bgCode").val(),
         okalert:false,
         loadingmask:true,
         callback: function(data) {

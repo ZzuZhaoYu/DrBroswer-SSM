@@ -76,6 +76,14 @@
     where ReportCode = #{reportcode,jdbcType=VARCHAR}
   </select>
 
+
+  <select id="getReportCode" resultType="java.lang.String" >
+     select max(ReportCode)
+    from report
+    where ReportCode like #{param}
+  </select>
+
+
   <select id="selectByChecknum" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
