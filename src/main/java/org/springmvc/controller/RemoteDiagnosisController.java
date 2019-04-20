@@ -160,7 +160,7 @@ public class RemoteDiagnosisController {
         r.setInfo(result);
 
 //        r.setUrl("UpLoadFile://" + checkNum + "&" + u.getId() + "&"+ userService.getHosIdOfUser(u.getDept()));
-        r.setUrl("UpLoadFile://" +"2" + "&"+userService.getHosIdOfUser(u.getDept()) + "&" + u.getUsername());
+        r.setUrl("UpLoadFile://" +"2" + "&"+userService.getHosIdOfUser(u.getDept()) + "&" + u.getUsername()+"&" +checkNum);
         return JSON.toJSONString(r);
     }
 
@@ -373,7 +373,7 @@ public class RemoteDiagnosisController {
         return JSON.toJSONString(paginationResult);
     }
     /**
-     * @Description: 远程诊断填写报告(报告回退以后，再次提交的时候，删除report该记录)
+     * @Description: 远程诊断填写报告(如果报告回退以后，再次提交的时候，需删除report该记录)
      * @Author: Shalldid
      * @Date: Created in 16:18 2018-05-10
      * @Return:
@@ -427,12 +427,18 @@ public class RemoteDiagnosisController {
             ReportJuniorDto reportJuniorDtoNew=new ReportJuniorDto();
 
             if(registerInfoJunior==null){                      //单个上传
-                ReportJuniorDto reportJuniorDto =new ReportJuniorDto(seriesNumGenerator.getReportCode(),"",departmentMapper.getHosIdbyDeptid(u.getDept())+checknum,clinicId,r.getTagpatientid(),
-                        pat_Name,pat_gender,p.getPatbrithdate(),p.getAge(),
-                        p.getAgetype(),"","",bedNo,r.getRegdate(),
-                       p.getAddress(),p.getYibaoid(),p.getIdcard(),p.getTelephone(),new Date(),"已写报告",
-                        examDesc,examDiagnosis,u.getUsername(),u.getName(),"","",0,deptName,"",false,report_path[1], jcbw,sfyangxing);
-                reportJuniorDtoNew=reportJuniorDto;
+
+                if(remotereportMapper.selectBycheckNum(checknum)!=null){
+                    remotereportMapper.deleteById(id);
+//                remoteReportService.deleteReportById(remoteReportService.getReportByChecknum(report.getChecknum()).getId());
+                }
+                RemoteReport remoteReport=new RemoteReport(id,checknum,clinicId,pat_Name,pat_gender,pat_age,deptName,bedNo,jcbw,new Date(),sfyangxing,"", report_path[0],u.getUsername(),examDesc,examDiagnosis,hosName);
+                int insert=remotereportMapper.insert(remoteReport);
+                if(report_ == 1 && reg_ == 1 && temporary_report==1 && insert==1){
+                    return "1";
+                }else {
+                    return "0";
+                }
             }else {                     //批量上传
 
                 ReportJuniorDto reportJuniorDto = new ReportJuniorDto(seriesNumGenerator.getJuniorReportCode(), registerInfoJunior.getRecordid(), checknum, clinicId, registerInfoJunior.getPatientid(),
@@ -441,23 +447,22 @@ public class RemoteDiagnosisController {
                         registerInfoJunior.getAddress(), registerInfoJunior.getYibaoid(), registerInfoJunior.getIdentityid(), registerInfoJunior.getTelephone(), new Date(), "已写报告",
                         examDesc, examDiagnosis, u.getUsername(), u.getName(), registerInfoJunior.getExamitemcode(), registerInfoJunior.getExamitemname(), 0, deptName, "", false, report_path[1], jcbw, sfyangxing);
                 reportJuniorDtoNew=reportJuniorDto;
-            }
             if(reportJuniorMapper.selectByChecknum(checknum)!=null){
                 reportJuniorMapper.deleteReportByCheckNum(checknum);
 //                remoteReportService.deleteReportById(remoteReportService.getReportByChecknum(report.getChecknum()).getId());
             }
             int junior_report=reportJuniorMapper.insertInto(reportJuniorDtoNew);
-
-
             if(report_ == 1 && reg_ == 1 && temporary_report==1 && junior_report==1){
                 return "1";
             }else {
                 return "0";
             }
+            }
         }catch (Exception e){
             e.printStackTrace();
             return "0";
         }
+
     }
     /**
      * @Description: 远程诊断加载已写报告列表

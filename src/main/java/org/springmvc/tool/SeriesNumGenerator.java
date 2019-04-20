@@ -40,6 +40,9 @@ public class SeriesNumGenerator {
     @Autowired
     private ReportJuniorMapper reportJuniorMapper;
 
+    @Autowired
+    private RemoteReportMapper remoteReportMapper;
+
     /**
      *@Description: 从数据库查询当前worklist表内最大的AccessionN号，若有则在当天的最大号加1，若无则返回检查类型+日期+001
      *@Author: Shalldid
