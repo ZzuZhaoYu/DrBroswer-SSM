@@ -125,6 +125,69 @@ function checkReport_Operation3(value,data) {
     return html;
 }
 
+function modify_info(value,data) {
+    alert(JSON.stringify(data));
+    alert("000");
+    if(data.checkNum == "没有数据！"){
+        var html = null;
+    }else {
+        alert("lalala");
+        var html = '<button type="button" class="btn-blue" onclick="modify(\''+data.patName+'\',\''+data.patGender+'\',\''+data.patient_Age+'\',\''+data.examItemName+'\',\''+data.imagePath+'\',\''+data.hosName+'\',\''+data.checkNum+'\',\''+data.checkDate+'\');">修改</button>';
+    }
+    return html;
+}
+
+function modify(patName, patGender, patient_Age, examItemName, imagePath,hosName,checkNum,checkDate) {
+    var timenow = new Date().getTime();
+    alert("123");
+    BJUI.dialog({
+        id:'writeReport'+timenow,
+        width: 400,
+        height: 400,
+        url: 'zlk_html/remote_batch_modify.jsp?patName=' + patName
+            + '&patGender='+ patGender + '&patient_Age=' + patient_Age
+            + '&examItemName=' + examItemName + '&imagePath=' + imagePath
+            + '&hosName=' + hosName+ '&checkNum=' + checkNum+ '&checkDate=' + checkDate,
+        title:'修改信息'
+    });
+}
+
+
+// function ok(patName, patGender, patient_Age, examItemName, hosName,checkNum,checkDate) {
+//     patName=$("#pat_name").val();
+//     patGender=$("#pat_gender").val();
+//     patient_Age=$("#pat_age").val();
+//     examItemName=$("#pat_checknum").val();
+//     hosName=$("#hosName").val();
+//     checkNum=$("#checkNum").val();
+//     checkDate=$("#checkDate").val();
+//     $.ajax({
+//         type: "post",
+//         url: "remote/save_modify"
+//             + "?patName=" + patName+"&patGender="+patGender+"&patient_Age="+patient_Age+
+//             "&examItemName="+examItemName+"&hosName="+hosName+"&checkNum="+checkNum+"&checkDate="+checkDate,
+//         dataType: "html",
+//         async: false,
+//         success: function (data) {
+//             alert(data);
+//             var pro = null;
+//             pro = eval("(" + data + ")");
+//             var info = pro.info;
+//             var url_path = pro.url;
+//             if (info == 0) {
+//                 BJUI.alertmsg('error', '未操作成功！请重新尝试！');
+//             } else {
+//                 BJUI.alertmsg('ok', '提交成功！');
+//                 alert("123");
+//                 $("#batch").attr("href", url_path);
+//                 alert(url_path);
+//             }
+//         }
+//     });
+// }
+
+
+
 // function change(checknum){
 //
 //     $(this).attr("value",checknum);

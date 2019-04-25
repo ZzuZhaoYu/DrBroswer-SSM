@@ -101,4 +101,21 @@ public class RemoteWrittedReportTab {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
+
+    public RemoteWrittedReportTab() {
+    }
+
+    public RemoteWrittedReportTab(String id, String checkNum, String patName, String patGender, String patient_Age, String examItemName, String hosName, String registerDate, String docName, String reportDate, String imagePath) {
+        this.id = id;
+        this.checkNum = checkNum;
+        this.patName = patName;
+        this.patGender = patGender;
+        this.patient_Age = patient_Age;
+        this.examItemName = examItemName;
+        this.hosName = hosName;
+        this.registerDate = registerDate;
+        this.docName = docName;
+        this.reportDate = reportDate;
+        this.imagePath = imagePath;
+    }
 }

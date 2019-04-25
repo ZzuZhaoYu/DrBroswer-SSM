@@ -12,6 +12,42 @@ public class RemoteModifyReportPatDetailAdd {
     private String imagePath;
     private String suggestion;
     private String hosNamewrite;
+    private String docName;
+    private String verifyDocName;
+    private String reportDate;
+    private String modality;
+
+    public String getModality() {
+        return modality;
+    }
+
+    public void setModality(String modality) {
+        this.modality = modality;
+    }
+
+    public String getDocName() {
+        return docName;
+    }
+
+    public void setDocName(String docName) {
+        this.docName = docName;
+    }
+
+    public String getVerifyDocName() {
+        return verifyDocName;
+    }
+
+    public void setVerifyDocName(String verifyDocName) {
+        this.verifyDocName = verifyDocName;
+    }
+
+    public String getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(String reportDate) {
+        this.reportDate = reportDate;
+    }
 
     public String getHosNamewrite() {
         return hosNamewrite;
@@ -101,6 +137,7 @@ public class RemoteModifyReportPatDetailAdd {
         this.imagePath = imagePath;
     }
 
+
     @Override
     public String toString() {
         return "RemoteModifyReportPatDetailAdd{" +
@@ -115,6 +152,10 @@ public class RemoteModifyReportPatDetailAdd {
                 ", imagePath='" + imagePath + '\'' +
                 ", suggestion='" + suggestion + '\'' +
                 ", hosNamewrite='" + hosNamewrite + '\'' +
+                ", docName='" + docName + '\'' +
+                ", verifyDocName='" + verifyDocName + '\'' +
+                ", reportDate='" + reportDate + '\'' +
+                ", modality='" + modality + '\'' +
                 '}';
     }
 }

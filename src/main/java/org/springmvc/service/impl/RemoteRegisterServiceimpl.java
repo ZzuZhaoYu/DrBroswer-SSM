@@ -140,6 +140,8 @@ public class RemoteRegisterServiceimpl implements RemoteRegisterService {
                 remoteWrittedReportTab.setDocName(userService.getUserByUserId(remoteReport.getDoccode()).getName());
                 remoteWrittedReportTab.setExamItemName(remoteRegister.getModality());
                 remoteWrittedReportTab.setHosName(hospitalMapper.getHosNameByHosId(remoteRegister.getRemotehos()));
+//                System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+//                System.out.println(remoteWrittedReportTab.getHosName());
                 remoteWrittedReportTab.setId(remoteReport.getId());
                 remoteWrittedReportTab.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteRegister.getTagpatientid(),simpleDateFormat.format(remoteRegister.getStudydate()),remoteRegister.getRemotehos()));
                 remoteWrittedReportTab.setPatGender(remoteReport.getPatsex());

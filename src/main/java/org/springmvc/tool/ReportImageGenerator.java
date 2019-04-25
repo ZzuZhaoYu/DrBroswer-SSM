@@ -102,8 +102,8 @@ public class ReportImageGenerator {
         System.out.println("generate"+hosId);
         String report_image_url_Junior=imageAndReportPathGenerator.getJuniorHosReportImagePath(hosId,checkNum,"jpg");
 
-        System.out.println(report_image_url_Junior);
-        System.out.println("?????????????????????????");
+//        System.out.println(report_image_url_Junior);
+//        System.out.println("?????????????????????????");
 
         String[] return_str=new String[2];
         return_str[0]=report_image_url;

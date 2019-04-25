@@ -21,11 +21,19 @@ $(function(){
             $("#examDiagnosis").val(pro.examDiagnosis);
             $("#imagePath").attr("href","DrViewerBoot://" + pro.imagePath);
             $("#suggestion_text_p").text(pro.suggestion);
+
+
+            $("#modality").val(pro.modality);
+            $("#x").val(pro.docName);
+            $("#c").val(pro.verifyDocName);
+            $("#z").val(pro.reportDate);
+
         }
     });
 });
 
 $("#modifyReport").click(function(){
+    alert( $("#hosname1").val());
     BJUI.ajax('doajax',{
         url:"remote/modifyReport?examDesc=" + $("#examDesc").val()
             + "&examDiagnosis=" + $("#examDiagnosis").val()
@@ -36,10 +44,11 @@ $("#modifyReport").click(function(){
             + "&bedNo=" + $("#bedNo").val()
             + "&jcbw=" + $("#jcbw").val()
             + "&sfyangxing=" + $("#sfyangxing").val()
-            + "&hosName=" + $("#hosName").text()
+            + "&hosName=" + $("#hosname1").val()
             + "&pat_name=" + $("#pat_name").val()
             + "&pat_gender=" + $("#pat_gender").val()
-            + "&pat_age=" + $("#pat_age").val(),
+            + "&pat_age=" + $("#pat_age").val()
+            +"&hosNameWrite="+$("#hosName").text(),
         okalert:false,
         loadingmask:true,
         callback: function(data) {
@@ -68,6 +77,34 @@ $("#save").click(function(){
             + "&pat_gender=" + $("#pat_gender").val()
             + "&pat_age=" + $("#pat_age").val()
         +"&suggestion="+$("#suggestion_text_p").val(),
+        okalert:false,
+        loadingmask:true,
+        callback: function(data) {
+            if(data == 1){
+                BJUI.alertmsg('ok', '提交成功！');
+            }else{
+                BJUI.alertmsg('error','未操作成功！请重新尝试！');
+            }
+        }
+    });
+});
+$("#back").click(function(){
+    BJUI.ajax('doajax',{
+        url:"remote/backToWriteReportRemote1?examDesc=" + $("#examDesc").val()
+            + "&examDiagnosis=" + $("#examDiagnosis").val()
+            + "&bgCode="+ $("#bgCode").val()
+            + "&pat_checknum=" + $("#pat_checknum").val()
+            + "&deptName=" + $("#deptName").val()
+            + "&clinicId=" + $("#clinicId").val()
+            + "&bedNo=" + $("#bedNo").val()
+            + "&jcbw=" + $("#jcbw").val()
+            + "&sfyangxing=" + $("#sfyangxing").val()
+            + "&hosName=" + $("#hosname1").val()
+            + "&pat_name=" + $("#pat_name").val()
+            + "&pat_gender=" + $("#pat_gender").val()
+            + "&pat_age=" + $("#pat_age").val()
+            +"&suggestion="+$("#suggestion_text_p").val()
+        +"&hosNameWrite="+$("#hosName").text(),
         okalert:false,
         loadingmask:true,
         callback: function(data) {

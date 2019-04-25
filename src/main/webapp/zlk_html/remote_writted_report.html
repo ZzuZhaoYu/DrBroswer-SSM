@@ -17,6 +17,7 @@
         return html;
     }
     function dialog_report4(id,patName,patGender,patAge,checknum,imagePath,hosName) {
+        alert(hosName);
         var timenow = new Date().getTime();
         BJUI.dialog({
             id:'modify_report' + timenow,
@@ -41,8 +42,9 @@
     }
 
     function back_report_hadchecked(checkNum,id){
-        alert("123");
-        alert(id);
+        // alert("123");
+        // alert(id);
+        // alert(data);
         $.ajax({
             type:"post",
             url:'remote/backToWriteReportRemote?checkNum='+checkNum+'&id='+id,

@@ -1,5 +1,6 @@
 package org.springmvc.dao_junior;
 
+import org.apache.ibatis.annotations.Param;
 import org.springmvc.pojo_junior.RegisterInfoJunior;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface RegisterInfoJuniorMapper {
 
     RegisterInfoJunior selectByCheckNum(String checknum);
 
+    int updateInfo(@Param("examItemCode") String examItemCode,@Param("examItemName") String examItemName,@Param("Age") Integer Age,@Param("AgeType") String AgeType,
+                   @Param("patName") String patName,@Param("patGender") String patGender,@Param("checkNum") String checkNum);
 }

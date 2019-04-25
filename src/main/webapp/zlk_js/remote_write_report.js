@@ -25,6 +25,13 @@ $(function(){
             $("#examDiagnosis").val(pro.examDiagnosis);
             $("#imagePath").attr("href","DrViewerBoot://" + pro.imagePath);
             $("#suggestion_text_p").text(pro.suggestion);
+
+
+            $("#modality").val(pro.modality);
+            $("#x").val(pro.docName);
+            $("#c").val(pro.verifyDocName);
+            $("#z").val(pro.reportDate);
+
         }
     });
 });
@@ -32,7 +39,7 @@ $(function(){
 
 
 $("#submitReport").click(function(){
-    alert($("#hosname1").val());
+    // alert($("#hosName").val());
     BJUI.ajax('doajax',{
         url:"remote/submitReport?examDesc=" + $("#examDesc").val()
         + "&examDiagnosis=" + $("#examDiagnosis").val()
@@ -47,7 +54,7 @@ $("#submitReport").click(function(){
         + "&pat_gender=" + $("#pat_gender").val()
         + "&pat_age=" + $("#pat_age").val()
         +"&suggestion=" +$("#suggestion_text_p").val()
-        +"&id=" +$("#bgCode").val(),
+        +"&id=" +$("#bgCode").val() +"&hosNameWrite="+ $("#hosName").text(),
         okalert:false,
         loadingmask:true,
         callback: function(data) {

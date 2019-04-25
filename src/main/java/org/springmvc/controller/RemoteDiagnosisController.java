@@ -114,6 +114,9 @@ public class RemoteDiagnosisController {
     @Resource
     private ReportJuniorMapper reportJuniorMapper;
 
+    @Resource
+    private ExamItemMapper examItemMapper;
+
 
     /**
      * @Description: 远程诊断登记(免登记)
@@ -264,6 +267,42 @@ public class RemoteDiagnosisController {
         System.out.println(r.getUrl());
         return JSON.toJSONString(r);
     }
+
+
+    /**
+     * @Description: 批量上传修改患者信息
+     * @Author: Shalldid
+     * @Date: Created in 11:31 2018-05-10
+     * @Return:
+     **/
+    @RequestMapping(value = "/save_modify")
+    @ResponseBody
+    public String save_modify( @RequestParam("patName") String patName,@RequestParam("patGender") String patGender,
+                               @RequestParam("patient_Age") String patient_Age,@RequestParam("examItemName") String examItemName,
+                               @RequestParam("hosName") String hosName,@RequestParam("CheckNum") String checkNum,@RequestParam("checkDate") String checkDate,
+                              HttpSession httpSession) throws Exception{
+
+        System.out.println("123");
+
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat1=new SimpleDateFormat("yyyyMMdd");
+
+        RegisterInfoJunior registerInfoJunior=registerInfoJuniorMapper.selectByCheckNum(checkNum);
+        String examItemCode=examItemMapper.getExamCodeByName(examItemName);
+        int Age=Integer.parseInt(patient_Age.substring(0,patient_Age.length()-1));
+        String AgeType=patient_Age.substring(patient_Age.length()-1);
+        System.out.println("lalala");
+        int modify=registerInfoJuniorMapper.updateInfo(examItemCode,examItemName,Age,AgeType,patName,patGender,checkNum);
+
+        System.out.println("123");
+        if(modify==1)
+        {
+            return JSON.toJSONString("1");
+        }else {
+            return JSON.toJSONString("0");
+        }
+    }
 //    /**
 //     * @Description: 远程诊断登记（单个）
 //     * @Author: Shalldid
@@ -393,15 +432,23 @@ public class RemoteDiagnosisController {
                                @RequestParam("pat_gender") String pat_gender,
                                @RequestParam("pat_age") String pat_age,
                                @RequestParam("suggestion") String suggestion,
-                               @RequestParam("id") String id,
+                               @RequestParam("id") String id,@RequestParam("hosNameWrite") String hosNameWrite,
                                HttpSession httpSession) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         User u = (User)httpSession.getAttribute("user");
         RemoteRegister r = remoteRegisterService.getRemoteRegisterByCheckNum(checknum);
         System.out.println(departmentMapper.getHosIdbyDeptid(u.getDept()));
         System.out.println(hospitalMapper.getHosIdByHosName(hosName));
-        String[] report_path = reportImageGenerator.outputReport(checknum, hosName, r.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
+        String[] report_path;
+        if(temporaryReportMapper.selectTemporaryReportByRemoteReportId(id)!=null) {
+            String[] report_path1 = reportImageGenerator.outputReport(checknum, hosNameWrite, r.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                    examDesc, examDiagnosis, u.getName(), temporaryReportMapper.selectTemporaryReportByRemoteReportId(id).getVerifydocname(), sdf.format(new Date()), hospitalMapper.getHosIdByHosName(hosName));
+            report_path=report_path1;
+        }else{
+            String[] report_path1 = reportImageGenerator.outputReport(checknum, hosNameWrite, r.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                    examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()), hospitalMapper.getHosIdByHosName(hosName));
+            report_path=report_path1;
+        }
         RemoteReport report = new RemoteReport(id,checknum,clinicId,pat_Name,pat_gender,pat_age,deptName,bedNo,jcbw,new Date(),sfyangxing,
                 r.getModality(),report_path[0],u.getId(),examDesc,examDiagnosis,r.getRemotehos(),null,"",suggestion);
         System.out.println(suggestion);
@@ -687,6 +734,8 @@ public class RemoteDiagnosisController {
             User u = (User) httpSession.getAttribute("user");
 
 
+
+
             TemporaryReport temporaryReport=temporaryReportMapper.selectTemporaryReportByRemoteReportId(id);
             System.out.println(id);
             System.out.println(temporaryReport);
@@ -705,7 +754,16 @@ public class RemoteDiagnosisController {
             rmrpd.setExamDiagnosis(remoteReport.getExamdiagnosis());
             rmrpd.setJcbw(remoteReport.getJcbw());
             rmrpd.setSfyangxing(remoteReport.getSfyangxing());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            rmrpd.setDocName(temporaryReport.getWritedocname());
+            rmrpd.setVerifyDocName(u.getName());
+            rmrpd.setReportDate(simpleDateFormat.format(new Date()));
+            rmrpd.setModality(remoteRegister.getModality());
+
+
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             rmrpd.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteReport.getChecknum(), sdf.format(remoteReport.getReporttime()), remoteRegister.getRemotehos()));
             rmrpd.setSuggestion(remoteReport.getRemarks());
             System.out.println(rmrpd);
@@ -733,6 +791,9 @@ public class RemoteDiagnosisController {
             System.out.println(id);
 //            RemoteReport remoteReport = remoteReportService.getReportById(id);
             RemoteReport remoteReport=remotereportMapper.selectByPrimaryKeyAddSecond(id);
+
+            RemoteRegister remoteRegister1=remoteRegisterMapper.selcetByChecknum(checknum);
+
             if(remoteReport==null){
                 RemoteModifyReportPatDetailAdd rmrpd = new RemoteModifyReportPatDetailAdd();
                 User u = (User) httpSession.getAttribute("user");
@@ -745,6 +806,13 @@ public class RemoteDiagnosisController {
                 rmrpd.setExamDiagnosis("");
                 rmrpd.setJcbw("");
                 rmrpd.setSfyangxing("阴");
+
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+                rmrpd.setDocName(u.getName());
+                rmrpd.setVerifyDocName("");
+                rmrpd.setReportDate(simpleDateFormat.format(new Date()));
+                rmrpd.setModality(remoteRegister1.getModality());
+
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 //                rmrpd.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteReport.getChecknum(), sdf.format(new Date()), hosname));
                 rmrpd.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(checknum, sdf.format(new Date()), hosname));
@@ -755,7 +823,7 @@ public class RemoteDiagnosisController {
                 System.out.println(rmrpd);
                 return JSON.toJSONString(rmrpd);
             }else {
-                TemporaryReport temporaryReport = remoteReportService.getTemporaryReportById(temporaryReportMapper.selectIdByRemoteReportId(id));
+                TemporaryReport temporaryReport = remoteReportService.getTemporaryReportById(temporaryReportMapper.selectIdByRemoteReportId(id));//按时间选择最晚一个
 //            System.out.println(temporaryReportMapper.selectIdByRemoteReportId(id));
 //            System.out.println(temporaryReport);
 
@@ -771,6 +839,14 @@ public class RemoteDiagnosisController {
                 rmrpd.setExamDiagnosis(remoteReport.getExamdiagnosis());
                 rmrpd.setJcbw(remoteReport.getJcbw());
                 rmrpd.setSfyangxing(remoteReport.getSfyangxing());
+
+
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+                rmrpd.setDocName(u.getName());
+                rmrpd.setVerifyDocName(temporaryReport.getVerifydocname());
+                rmrpd.setReportDate(simpleDateFormat.format(new Date()));
+                rmrpd.setModality(remoteRegister.getModality());
+
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 //            rmrpd.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteReport.getChecknum(), sdf.format(remoteReport.getReporttime()), remoteRegister.getRemotehos()));
                 rmrpd.setImagePath(imageAndReportPathGenerator.getRemoteImagePath(remoteReport.getChecknum(), sdf.format(new Date()), remoteRegister.getRemotehos()));
@@ -806,7 +882,7 @@ public class RemoteDiagnosisController {
                                      @RequestParam("pat_name") String pat_Name,
                                      @RequestParam("pat_gender") String pat_gender,
                                      @RequestParam("pat_age") String pat_age,
-                                     @RequestParam("bgCode") String id, HttpSession httpSession)throws IOException{
+                                     @RequestParam("bgCode") String id,@RequestParam("hosNameWrite") String hosNameWrite, HttpSession httpSession)throws IOException{
         try {
             RemoteReport remoteReport = remoteReportService.getReportByIdAdd(id);
             remoteReport.setBedno(bedNo);
@@ -820,9 +896,11 @@ public class RemoteDiagnosisController {
             remoteReport.setJcbw(jcbw);
             remoteReport.setReporttime(new Date());
             remoteReport.setSfyangxing(sfyangxing);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            String[] report_path = reportImageGenerator.outputReport(checknum, hosName, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
-                    examDesc, examDiagnosis, u.getName(), "", sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            System.out.println("修改"+hosName);
+            System.out.println(hospitalMapper.getHosIdByHosName(hosName));
+            String[] report_path = reportImageGenerator.outputReport(checknum, hosNameWrite, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                    examDesc, examDiagnosis, temporaryReportMapper.selectTemporaryReportByRemoteReportId(id).getWritedocname(), u.getName(), sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
             remoteReport.setReportpath(report_path[0]);
 
             remoteReport.setVerifieddoccode(u.getUsername());
@@ -968,6 +1046,60 @@ public class RemoteDiagnosisController {
             int reg_ =remoteRegisterService.updateFlagByCheckNum("已分配",checknum);
 
 //            int report_junior_=reportJuniorMapper.updateFlagByCheckNum("已分配",checknum);
+
+//            String[] report_path = reportImageGenerator.outputReport(checknum, hosName, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+//                    examDesc, examDiagnosis, u.getName(), u.getName(), sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
+
+            System.out.println(reg_);
+//            if(reg_ == 1 &&rep_==1 && report_junior_==1){
+            if(reg_ == 1 &&rep_==1){
+                return "1";
+            }else {
+                return "0";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return "0";
+        }
+    }
+
+    @RequestMapping(value = "/backToWriteReportRemote1")
+    @ResponseBody
+    public String backToWriteReportRemote1(@RequestParam("pat_checknum") String checknum,
+                       @RequestParam("deptName") String deptName,
+                       @RequestParam("clinicId") String clinicId,
+                       @RequestParam("bedNo") String bedNo,
+                       @RequestParam("jcbw") String jcbw,
+                       @RequestParam("sfyangxing") String sfyangxing,
+                       @RequestParam("examDesc") String examDesc,
+                       @RequestParam("examDiagnosis") String examDiagnosis,
+                       @RequestParam("hosName") String hosName,
+                       @RequestParam("pat_name") String pat_Name,
+                       @RequestParam("pat_gender") String pat_gender,
+                       @RequestParam("pat_age") String pat_age,
+                       @RequestParam("bgCode") String id,
+                       @RequestParam("suggestion") String suggestion,
+                       @RequestParam("hosNameWrite") String hosNameWrite, HttpSession httpSession)throws IOException {
+        try{
+//            int rep_ = remoteReportService.deleteReportById(id);
+            System.out.println(hosNameWrite);
+            System.out.println("????????????????????????????????????????");
+            int rep_ = remoteReportService.updateReportById(id);
+            TemporaryReport temporaryReport = remoteReportService.getTemporaryReportById(temporaryReportMapper.selectIdByRemoteReportId(id));
+            System.out.println(rep_);
+            int reg_ =remoteRegisterService.updateFlagByCheckNum("已分配",checknum);
+
+//            int report_junior_=reportJuniorMapper.updateFlagByCheckNum("已分配",checknum);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            RemoteReport remoteReport = remoteReportService.getReportByIdAdd(id);
+            User u = (User)httpSession.getAttribute("user");
+
+            System.out.println("123123123");
+            System.out.println(hosName);
+            String[] report_path = reportImageGenerator.outputReport(checknum, hosNameWrite, remoteReport.getModality(), pat_Name, pat_gender, pat_age, deptName, clinicId, bedNo, jcbw,
+                    examDesc, examDiagnosis,userMapper.selectByPrimaryKey(temporaryReport.getWritedoccode()).getName(), u.getName(), sdf.format(new Date()),hospitalMapper.getHosIdByHosName(hosName));
 
             System.out.println(reg_);
 //            if(reg_ == 1 &&rep_==1 && report_junior_==1){

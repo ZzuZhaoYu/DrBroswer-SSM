@@ -645,4 +645,15 @@
       nowOperator = #{nowoperator,jdbcType=VARCHAR}
     where CheckNum = #{checknum,jdbcType=VARCHAR}
   </update>
+
+  <update id="updateInfo"  parameterType="org.springmvc.pojo_junior.RegisterInfoJunior">
+    update register_info
+    set PatName = #{patName,jdbcType=VARCHAR},
+      PatGender = #{patGender,jdbcType=VARCHAR},
+      ExamItemCode = #{examItemCode,jdbcType=VARCHAR},
+      Age = #{Age,jdbcType=NUMERIC},
+      ExamItemName = #{examItemName,jdbcType=VARCHAR},
+      AgeType = #{AgeType,jdbcType=VARCHAR}
+    where CheckNum = #{checkNum,jdbcType=VARCHAR}
+  </update>
 </mapper>

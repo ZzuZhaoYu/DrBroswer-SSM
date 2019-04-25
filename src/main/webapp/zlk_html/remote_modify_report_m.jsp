@@ -91,7 +91,9 @@
             <div class="icon"><img src="images/redcross.png" /></div>
             <div class="hostitle"><span id="hosName"></span></div>
 
-            <input type="hidden" id="hosname1" value="${param.hosName}">
+            <div style="float: right;margin-right: 320px"><input id="modality" style="width: 32px;border-top-width: 0px;padding-top: 0px;border:none;margin-bottom: 2px;"/>检查报告单</div>
+
+            <input  id="hosname1" value="${param.hosName}">
 
         </div>
         <hr width="750" align="center">
@@ -117,6 +119,9 @@
             <label class="row-label">印象：</label><br/>
             <textarea id="examDiagnosis" rows="12" cols="65"></textarea>
         </div>
+        <div style="margin-right: 55px;margin-top: 20px ;float: right">报告日期：<input id="z" type="text"  size="10" readonly="" /></div>
+        <div style="margin-left: 100px;margin-top: 20px ;float: left">报告医师：<input id="x" type="text"  size="10" readonly="" /></div>
+        <div style="margin-left: 340px;margin-top: 20px">审核医师：<input id="c" type="text"  size="10" readonly="" /></div>
     </div>
     <div class="template">
         <fieldset>
@@ -173,6 +178,7 @@
     <ul>
         <li><button type="submit" class="btn-default" id="modifyReport">提交修改</button></li>
         <li><button type="submit" class="btn-default" id="save">保存</button></li>
+        <li><button type="submit" class="btn-default" id="back">退回</button></li>
     </ul>
 </div>
 </body>
